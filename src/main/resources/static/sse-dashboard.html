@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>SSE Multi User Test</title>
+    <style>
+        body { font-family: Arial; }
+        .container { display: flex; gap: 20px; }
+        .user-box {
+            width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 10px;
+        }
+        .card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 8px;
+            margin-top: 8px;
+        }
+        .title { font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<h2>📡 SSE Multi User Feed</h2>
+
+<div class="container" id="container"></div>
+
+<script>
+    const userIds = [1, 2, 3, 4];
+    const container = document.getElementById("container");
+
+    userIds.forEach(userId => {
+
+        const box = document.createElement("div");
+        box.className = "user-box";
+
+        const title = document.createElement("h3");
+        title.innerText = `User ${userId}`;
+
+        const feed = document.createElement("div");
+
+        box.appendChild(title);
+        box.appendChild(feed);
+        container.appendChild(box);
+
+        const es = new EventSource(`/api/notifications/subscribe/${userId}`);
+
+        es.addEventListener("recommendation", (e) => {
+            const data = JSON.parse(e.data);
+
+            const card = document.createElement("div");
+            card.className = "card";
+
+            card.innerHTML = `
+                <div class="title">${data.title}</div>
+                <div>${data.content}</div>
+            `;
+
+            feed.prepend(card);
+        });
+
+        es.onerror = () => console.log(`❌ error user ${userId}`);
+        es.onopen = () => console.log(`✅ connected user ${userId}`);
+    });
+</script>
+
+</body>
+</html>
