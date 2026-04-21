@@ -1,0 +1,82 @@
+[
+  {
+    "placeCode": "JEMAA_EL_FNA",
+    "city": "Marrakech",
+    "theme": "PHOTO",
+    "timeTag": "NIGHT",
+    "personas": ["PHOTO_TRAVELER"],
+    "content": "The night at Jemaa el-Fnaa is vibrant but can be low in light. Keep your shutter speed above 1/60 and include smoky street food stalls in the foreground to add dynamic composition."
+  },
+  {
+    "placeCode": "JEMAA_EL_FNA",
+    "city": "Marrakech",
+    "theme": "FOOD",
+    "timeTag": "ALWAYS",
+    "personas": ["FOODIE"],
+    "content": "The snail soup (Babbouche) at stall number 14 in the night market is highly recommended by locals. It has strong spices, so pairing it with mint tea is a great choice."
+  },
+  {
+    "placeCode": "MAJORELLE",
+    "city": "Marrakech",
+    "theme": "PHOTO",
+    "timeTag": "MORNING",
+    "personas": ["PHOTO_TRAVELER"],
+    "content": "The cobalt blue walls of Majorelle Garden look most vivid between 9 and 10 AM. Use the sunlight filtering through cactus paths for beautiful portrait shots."
+  },
+  {
+    "placeCode": "MAJORELLE",
+    "city": "Marrakech",
+    "theme": "RELAX",
+    "timeTag": "MORNING",
+    "personas": ["RELAXER"],
+    "content": "The bench near the small pond inside the garden is one of the quietest spots in Marrakech. Perfect for meditation or writing a travel journal while listening to the water."
+  },
+  {
+    "placeCode": "BAHIA_PALACE",
+    "city": "Marrakech",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "Bahia Palace, meaning 'brilliance,' showcases the finest Moroccan architecture of the 19th century. Explore the rooms and compare the intricate tile patterns (Zellij)."
+  },
+  {
+    "placeCode": "KOUTOUBIA",
+    "city": "Marrakech",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "The 70-meter Koutoubia minaret is visible from almost anywhere in Marrakech. By law, no building can be taller, preserving the city's skyline."
+  },
+  {
+    "placeCode": "BEN_YOUSSEF",
+    "city": "Marrakech",
+    "theme": "PHOTO",
+    "timeTag": "AFTERNOON",
+    "personas": ["PHOTO_TRAVELER", "EXPLORER"],
+    "content": "Capture symmetry in the central courtyard of the madrasa. The carved cedar wood and marble floor reflections enhance the geometric beauty."
+  },
+  {
+    "placeCode": "SOUK_SMARINE",
+    "city": "Marrakech",
+    "theme": "SHOPPING",
+    "timeTag": "ALWAYS",
+    "personas": ["SHOPPER"],
+    "content": "Souk Semmarine is the largest market in Marrakech. When buying leather goods, start bargaining at one-third of the asking price. Look out for babouche shoes and lanterns."
+  },
+  {
+    "placeCode": "AL_FASSIA",
+    "city": "Marrakech",
+    "theme": "FOOD",
+    "timeTag": "DINNER",
+    "personas": ["FOODIE"],
+    "content": "Al Fassia is a traditional Moroccan restaurant run entirely by female chefs. The lamb and prune tagine offers a perfect balance of sweet and savory flavors."
+  },
+  {
+    "placeCode": "LE_JARDIN_SECRET",
+    "city": "Marrakech",
+    "theme": "RELAX",
+    "timeTag": "AFTERNOON",
+    "personas": ["RELAXER", "SHOPPER"],
+    "content": "A hidden garden completely isolated from the noise of the market. Enjoy Moroccan mint tea on the rooftop terrace while overlooking the city."
+  }
+]
