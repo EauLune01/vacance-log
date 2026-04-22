@@ -89,5 +89,7 @@ public class MarrakechDataLoader implements CommandLineRunner {
                 new Point(lng, lat),
                 code
         );
+
+        log.info("✅ Place saved to DB & Redis: {} ({})", name, code);
     }
 }

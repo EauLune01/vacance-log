@@ -61,19 +61,18 @@ public class LocationService {
     private List<PlaceCandidate> detectNearbyPlaces(Room room, Double lat, Double lng) {
         String key = GEO_KEY_PREFIX + room.getCity().getId();
 
-        GeoResults<RedisGeoCommands.GeoLocation<Object>> results =
-                searchNearbyPlaces(key, lat, lng);
+        GeoResults<RedisGeoCommands.GeoLocation<Object>> results = searchNearbyPlaces(key, lat, lng);
 
         if (results.getContent().isEmpty()) {
-            log.debug("📍 No nearby candidates found (roomId: {})", room.getId());
             return Collections.emptyList();
         }
 
         return results.getContent().stream()
-                .map(r -> new PlaceCandidate(
-                        r.getContent().getName().toString(),
-                        Math.round(r.getDistance().getValue() * 1000)
-                ))
+                .map(r -> {
+                    String extractedCode = r.getContent().getName().toString();
+                    long dist = Math.round(r.getDistance().getValue() * 1000);
+                    return new PlaceCandidate(extractedCode, dist);
+                })
                 .toList();
     }
 
@@ -143,11 +142,12 @@ public class LocationService {
         return false;
     }
 
-    private boolean isAllMembersUploaded(Room room, String placeCode) {
+    private boolean isAllMembersUploaded(Room room, String placeCodeFromRedis) {
         int totalMembers = room.getUserRooms().size();
 
         long uploadedUserCount = room.getPhotos().stream()
-                .filter(photo -> placeCode.equals(photo.getLandmarkName()))
+                .filter(photo -> photo.getPhotoPlace() != null)
+                .filter(photo -> placeCodeFromRedis.equals(photo.getPhotoPlace().getPlaceCode()))
                 .map(photo -> photo.getUser().getId())
                 .distinct()
                 .count();

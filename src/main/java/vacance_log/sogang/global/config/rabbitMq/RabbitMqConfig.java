@@ -14,61 +14,53 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMqConfig {
 
-    /* =========================
-       Queue
-    ========================= */
-
+    /**
+     * Queue Names
+     */
     public static final String PHOTO_ANALYSIS_QUEUE = "photo.analysis.queue";
     public static final String RECOMMENDATION_QUEUE = "recommendation.queue";
+    public static final String DIARY_GENERATE_QUEUE = "diary.generate.queue";
 
-    @Bean
-    public Queue photoAnalysisQueue() {
-        return new Queue(PHOTO_ANALYSIS_QUEUE, true);
-    }
-
-    @Bean
-    public Queue recommendationQueue() {
-        return new Queue(RECOMMENDATION_QUEUE, true);
-    }
-
-
-    /* =========================
-       Exchange
-    ========================= */
-
-    // 사진 이벤트용
+    /**
+     * Exchange Names
+     */
     public static final String PHOTO_EXCHANGE = "photo.exchange";
-
-    // 여행/추천 이벤트용
     public static final String TRAVEL_EXCHANGE = "travel.exchange";
 
+    /**
+     * Routing Keys
+     */
+    public static final String PHOTO_UPLOADED = "photo.uploaded";      // 사진 업로드 이벤트
+    public static final String LOCATION_DETECTED = "location.detected"; // 위치 감지 (추천) 이벤트
+    public static final String DIARY_GENERATE_ROUTING = "diary.generate.routing"; // 다이어리 생성 이벤트
+
+    /* -------------------------------------------------------------------------- */
+
+    /**
+     * 1. Queue Beans
+     */
     @Bean
-    public TopicExchange photoExchange() {
-        return new TopicExchange(PHOTO_EXCHANGE);
-    }
+    public Queue photoAnalysisQueue() { return new Queue(PHOTO_ANALYSIS_QUEUE, true); }
 
     @Bean
-    public TopicExchange travelExchange() {
-        return new TopicExchange(TRAVEL_EXCHANGE);
-    }
+    public Queue recommendationQueue() { return new Queue(RECOMMENDATION_QUEUE, true); }
 
+    @Bean
+    public Queue diaryGenerateQueue() { return new Queue(DIARY_GENERATE_QUEUE, true); }
 
-    /* =========================
-       Routing Key
-    ========================= */
+    /**
+     * 2. Exchange Beans (Topic Type)
+     */
+    @Bean
+    public TopicExchange photoExchange() { return new TopicExchange(PHOTO_EXCHANGE); }
 
-    // 사진 관련 이벤트
-    public static final String PHOTO_UPLOADED = "photo.uploaded";
+    @Bean
+    public TopicExchange travelExchange() { return new TopicExchange(TRAVEL_EXCHANGE); }
 
-    // 위치 기반 이벤트
-    public static final String LOCATION_DETECTED = "location.detected";
-
-
-    /* =========================
-       Binding
-    ========================= */
-
-    // 사진 → 분석 큐
+    /**
+     * 3. Bindings
+     */
+    // [사진 서비스] 사진 업로드 -> AI 분석 큐
     @Bean
     public Binding bindingPhoto(Queue photoAnalysisQueue, TopicExchange photoExchange) {
         return BindingBuilder.bind(photoAnalysisQueue)
@@ -76,7 +68,7 @@ public class RabbitMqConfig {
                 .with(PHOTO_UPLOADED);
     }
 
-    // 위치 → 추천 큐
+    // [여행 서비스] 위치 감지 -> 장소 추천 큐
     @Bean
     public Binding bindingRecommendation(Queue recommendationQueue, TopicExchange travelExchange) {
         return BindingBuilder.bind(recommendationQueue)
@@ -84,20 +76,21 @@ public class RabbitMqConfig {
                 .with(LOCATION_DETECTED);
     }
 
+    // [여행 서비스] 여행 종료 -> 다이어리 생성 큐
+    @Bean
+    public Binding bindingDiary(Queue diaryGenerateQueue, TopicExchange travelExchange) {
+        return BindingBuilder.bind(diaryGenerateQueue)
+                .to(travelExchange)
+                .with(DIARY_GENERATE_ROUTING);
+    }
 
-    /* =========================
-       Message Converter
-    ========================= */
-
+    /**
+     * 4. Infrastructure (Converter, Template)
+     */
     @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
-
-
-    /* =========================
-       RabbitTemplate
-    ========================= */
 
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
