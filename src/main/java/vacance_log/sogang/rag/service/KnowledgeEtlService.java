@@ -22,7 +22,7 @@ public class KnowledgeEtlService {
     private final VectorStore vectorStore;
 
     @Transactional
-    public void etlMarrakechKnowledge() { // String -> void
+    public void etlMarrakechKnowledge() {
         try {
             // 1. E: 추출
             Resource resource = new ClassPathResource("data/marrakech_knowledge.json");

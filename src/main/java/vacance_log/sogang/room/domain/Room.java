@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import vacance_log.sogang.diary.domain.Diary;
 import vacance_log.sogang.global.domain.BaseEntity;
+import vacance_log.sogang.global.exception.room.TravelAlreadyFinishedException;
 import vacance_log.sogang.notification.domain.PushHistory;
 import vacance_log.sogang.global.exception.room.RoomCapacityExceededException;
 import vacance_log.sogang.photo.domain.Photo;
@@ -77,5 +78,11 @@ public class Room extends BaseEntity {
 
     private boolean isFull() {
         return this.userRooms.size() >= MAX_CAPACITY;
+    }
+
+    public List<User> getParticipants() {
+        return this.userRooms.stream()
+                .map(UserRoom::getUser)
+                .toList();
     }
 }

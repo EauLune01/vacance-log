@@ -6,8 +6,14 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vacance_log.sogang.global.dto.response.ApiResponse;
+import vacance_log.sogang.global.exception.diary.DiaryNotFoundException;
+import vacance_log.sogang.global.exception.image.InvalidImageUrlException;
+import vacance_log.sogang.global.exception.photo.PhotoNotFoundException;
+import vacance_log.sogang.global.exception.photoPlace.PhotoPlaceNotFoundException;
 import vacance_log.sogang.global.exception.room.RoomCapacityExceededException;
 import vacance_log.sogang.global.exception.room.RoomNotFoundException;
+import vacance_log.sogang.global.exception.room.TravelAlreadyFinishedException;
+import vacance_log.sogang.global.exception.user.UserNotFoundException;
 
 import java.util.stream.Collectors;
 
@@ -32,6 +38,36 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RoomNotFoundException.class)
     protected ResponseEntity<ApiResponse<?>> handleRoomNotFoundException(RoomNotFoundException e) {
         return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    protected ResponseEntity<ApiResponse<?>> handleUserNotFoundException(UserNotFoundException e) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(PhotoPlaceNotFoundException.class)
+    protected ResponseEntity<ApiResponse<?>> handlePhotoPlaceNotFoundException(PhotoPlaceNotFoundException e) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(PhotoNotFoundException.class)
+    protected ResponseEntity<ApiResponse<?>> handlePhotoNotFoundException(PhotoNotFoundException e) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(DiaryNotFoundException.class)
+    protected ResponseEntity<ApiResponse<?>> handleDiaryNotFoundException(DiaryNotFoundException e) {
+        return buildErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidImageUrlException.class)
+    protected ResponseEntity<ApiResponse<?>> handleInvalidImageUrlException(InvalidImageUrlException e) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(TravelAlreadyFinishedException.class)
+    protected ResponseEntity<ApiResponse<?>> handleTravelFinishedException(TravelAlreadyFinishedException e) {
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

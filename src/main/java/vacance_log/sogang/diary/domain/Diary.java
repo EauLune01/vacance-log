@@ -16,9 +16,11 @@ public class Diary extends BaseEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
     private Room room;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(columnDefinition = "TEXT")
@@ -27,13 +29,31 @@ public class Diary extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private DiaryType type;
 
-    public static Diary createDiary(Room room, User user, String content, DiaryType type) {
+    @Column(columnDefinition = "vector(1536)")
+    private float[] embedding;
+
+    // 개인 다이어리 생성 팩토리
+    public static Diary createPersonal(Room room, User user) {
         Diary diary = new Diary();
-        room.getDiaries().add(diary);
         diary.room = room;
         diary.user = user;
-        diary.content = content;
-        diary.type = type;
+        diary.type = DiaryType.INDIVIDUAL;
         return diary;
+    }
+
+    // 전체 에세이 생성 팩토리
+    public static Diary createEssay(Room room) {
+        Diary diary = new Diary();
+        diary.room = room;
+        diary.type = DiaryType.GROUP;
+        return diary;
+    }
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void updateEmbedding(float[] embedding) {
+        this.embedding = embedding;
     }
 }

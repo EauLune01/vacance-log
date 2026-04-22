@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import vacance_log.sogang.global.domain.BaseEntity;
 import vacance_log.sogang.room.domain.Room;
 import vacance_log.sogang.user.domain.User;
+import vacance_log.sogang.place.domain.PhotoPlace;
 
 @Entity
 @Getter
@@ -28,16 +29,16 @@ public class Photo extends BaseEntity {
     @JoinColumn(name = "user_id")
     private User user;
 
-    private String landmarkName;
-    private String groupTag;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "photo_place_id")
+    private PhotoPlace photoPlace;
 
-    public static Photo createPhoto(String s3Url, User user, Room room, String landmarkName, String groupTag) {
+    public static Photo createPhoto(String s3Url, User user, Room room, PhotoPlace photoPlace) {
         Photo photo = new Photo();
         photo.s3Url = s3Url;
         photo.user = user;
         photo.room = room;
-        photo.landmarkName = landmarkName;
-        photo.groupTag = groupTag;
+        photo.photoPlace=photoPlace;
         return photo;
     }
 
