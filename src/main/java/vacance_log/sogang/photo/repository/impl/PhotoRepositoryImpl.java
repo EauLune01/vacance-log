@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static vacance_log.sogang.photo.domain.QPhoto.photo;
+import static vacance_log.sogang.room.domain.QRoom.room;
+import static vacance_log.sogang.user.domain.QUser.user;
 
 @RequiredArgsConstructor
 public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
@@ -28,12 +30,14 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
     }
 
     @Override
-    public Optional<Photo> findByIdWithRoomAndUser(Long photoId) {
+    public Optional<Photo> findByIdDetail(Long photoId) {
         return Optional.ofNullable(
                 queryFactory
                         .selectFrom(photo)
-                        .join(photo.room).fetchJoin()
-                        .join(photo.user).fetchJoin()
+                        .join(photo.room, room).fetchJoin()
+                        .join(room.city).fetchJoin()
+                        .join(photo.user, user).fetchJoin()
+                        .leftJoin(photo.photoPlace).fetchJoin()
                         .where(photo.id.eq(photoId))
                         .fetchOne()
         );

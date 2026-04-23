@@ -1,4 +1,4 @@
-package vacance_log.sogang.global.init;
+package vacance_log.sogang.global.init.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -7,6 +7,7 @@ import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
 import vacance_log.sogang.diary.domain.DiaryType;
+import vacance_log.sogang.rag.domain.TravelKnowledge;
 import vacance_log.sogang.diary.template.TravelPromptTemplates;
 import vacance_log.sogang.global.exception.embedding.EmbeddingFailedException;
 import vacance_log.sogang.global.exception.image.InvalidImageUrlException;
@@ -15,6 +16,7 @@ import vacance_log.sogang.photo.domain.Photo;
 import vacance_log.sogang.place.dto.event.PlaceCandidate;
 import vacance_log.sogang.place.repository.PhotoPlaceRepository;
 import vacance_log.sogang.place.worker.RecommendationPrompt;
+import vacance_log.sogang.rag.repository.TravelKnowledgeRepository;
 import vacance_log.sogang.room.domain.Room;
 
 import java.net.MalformedURLException;
@@ -31,39 +33,56 @@ public class OpenAiService {
     private final ChatClient chatClient;
     private final EmbeddingModel embeddingModel;
     private final PhotoPlaceRepository photoPlaceRepository;
+    private final TravelKnowledgeRepository travelKnowledgeRepository;
     private final RecommendationPrompt promptStore;
 
-    public String getRecommendation(Room room, String cityName, String personas, List<PlaceCandidate> candidates, String context) {
+    public String getRecommendation(Room room, String cityName, String personas,
+                                    List<PlaceCandidate> candidates, String userContext) {
 
         List<String> placeCodes = extractPlaceCodes(candidates);
-
         Map<String, String> placeNameMap = photoPlaceRepository.findPlaceNamesByCodes(placeCodes);
-
         String formattedCandidates = formatCandidates(candidates, placeNameMap);
+
+        // 1. [Refactoring] 이름 줄인 findByCodes 사용
+        String systemKnowledge = travelKnowledgeRepository.findByCodes(placeCodes).stream()
+                .map(k -> String.format("[%s Tip]: %s", k.getPlaceCode(), k.getContent()))
+                .collect(Collectors.joining("\n"));
+
+        // 2. Hybrid Context 구성
+        String hybridContext = String.format(
+                "### User's Records\n%s\n\n### Professional Tips\n%s",
+                (userContext != null) ? userContext : "None",
+                systemKnowledge
+        );
 
         int groupSize = room.getUserRooms().size();
 
         return chatClient.prompt()
-                .system(sp -> sp.text(promptStore.getSystemPrompt())
-                        .param("city", cityName))
+                .system(sp -> sp.text(promptStore.getSystemPrompt()).param("city", cityName))
                 .user(up -> up.text(promptStore.getUserPrompt())
                         .param("city", cityName)
                         .param("personas", personas)
                         .param("candidates", formattedCandidates)
-                        .param("context", context)
+                        .param("context", hybridContext)
                         .param("group_size", groupSize))
                 .call()
                 .content();
     }
 
-    public String generateShortMemo(String imageUrl) {
+    public String generateShortMemo(String imageUrl, String placeCode) {
+        String knowledgeBase = travelKnowledgeRepository.findByCode(placeCode)
+                .map(TravelKnowledge::getContent)
+                .orElse("a memorable moment"); // 지식 없으면 기본값
+
         return chatClient.prompt()
                 .user(u -> {
                     try {
-                        u.text("Write a poetic English caption. MAX 20 BYTES. Just 3~5 words.")
+                        u.text(String.format(
+                                        "Write a poetic English caption. MAX 20 BYTES. Just 3~5 words. " +
+                                                "Reference this context: %s", knowledgeBase)) // 🚀 RAG 지식 주입!
                                 .media(MimeTypeUtils.IMAGE_JPEG, URI.create(imageUrl).toURL());
                     } catch (MalformedURLException e) {
-                        log.error("❌ Invalid S3 URL: {}", imageUrl);
+                        log.error("❌ [Vision Analysis Error] Invalid S3 URL: {}", imageUrl, e);
                         throw new InvalidImageUrlException("잘못된 이미지 URL입니다.");
                     }
                 })
@@ -87,10 +106,28 @@ public class OpenAiService {
                 .content();
     }
 
-    public String generateAnswerFromDiaries(String query, String context, String nickname) {
+    /**
+     * 사용자 다이어리와 시스템 전문 지식을 결합하여 답변 생성 (Hybrid RAG)
+     */
+    public String generateAnswerFromDiaries(String query, String userContext, String systemKnowledge, String nickname) {
+
+        // 1. 유저의 사적 기록과 시스템 지식을 구조적으로 결합
+        StringBuilder combinedContext = new StringBuilder();
+
+        combinedContext.append("### [User's Private Travel Records]\n")
+                .append(userContext != null ? userContext : "No private records found.")
+                .append("\n\n");
+
+        if (systemKnowledge != null && !systemKnowledge.isBlank()) {
+            combinedContext.append("### [Official Travel Knowledge & Tips]\n")
+                    .append(systemKnowledge)
+                    .append("\n");
+        }
+
+        // 2. 최종 프롬프트 실행
         return chatClient.prompt()
                 .system(String.format(TravelPromptTemplates.RAG_ANSWER_SYSTEM, nickname))
-                .user(String.format(TravelPromptTemplates.RAG_ANSWER_USER, context, query))
+                .user(String.format(TravelPromptTemplates.RAG_ANSWER_USER, combinedContext.toString(), query))
                 .call()
                 .content();
     }
