@@ -10,7 +10,7 @@ import vacance_log.sogang.rag.service.TravelKnowledgeEtlService;
 
 @Slf4j
 @Component
-@Order(10) // 모든 City, PhotoPlace, Room 생성이 끝난 후 실행
+@Order(10)
 @RequiredArgsConstructor
 public class KnowledgeDataLoader implements CommandLineRunner {
 

@@ -19,7 +19,7 @@ import vacance_log.sogang.user.repository.UserRepository;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-@Order(7) // MarrakechRoomDataLoader(6) 다음 순서
+@Order(7)
 public class ParisRoomDataLoader implements CommandLineRunner {
 
     private final UserRepository userRepository;
