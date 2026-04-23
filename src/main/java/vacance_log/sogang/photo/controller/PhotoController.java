@@ -61,8 +61,6 @@ public class PhotoController {
             )
             @RequestPart(value = "file") MultipartFile file
     ) {
-        log.info("📸 Photo Upload Initiation - Room: {}, User: {}, Place: {}",
-                request.getRoomId(), request.getUserId(), request.getPhotoPlaceId());
         PhotoUploadCommand command = PhotoUploadRequest.of(request, file);
         photoService.createPhoto(command);
         return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponse<>(true, 201, "사진 업로드 성공 및 AI 메모 생성 요청 완료", null));
@@ -71,27 +69,23 @@ public class PhotoController {
     @Operation(
             summary = "장소별 사진 업로드 현황 조회",
             description = """
-                특정 장소(photoPlaceId)에 대해 해당 방(roomId)의 멤버들이 
-                사진을 업로드했는지 여부와 S3 URL을 조회합니다.
-                
-                - 각 멤버별 업로드 여부 확인 가능
-                - 업로드된 경우 S3 URL 반환
+                특정 방(roomId) 내의 특정 장소(photoPlaceId)에 대해 
+                멤버들의 사진 업로드 여부와 S3 URL을 계층형 경로로 조회합니다.
                 """
     )
     @ApiResponses(value = {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "현황 조회 성공"),
-            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 요청 (roomId 또는 photoPlaceId 오류)"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "방 또는 장소를 찾을 수 없음"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    @GetMapping("/status")
+    @GetMapping("/{roomId}/places/{photoPlaceId}/status")
     public ResponseEntity<ApiResponse<PhotoStatusResponse>> getPhotoStatus(
-            @Parameter(description = "조회할 방 ID", example = "1", required = true)
-            @RequestParam Long roomId,
-            @Parameter(description = "조회할 장소 ID", example = "10", required = true)
-            @RequestParam Long photoPlaceId
+            @Parameter(description = "조회할 방 ID", example = "1")
+            @PathVariable Long roomId,
+            @Parameter(description = "조회할 장소 ID", example = "10")
+            @PathVariable Long photoPlaceId
     ) {
         PhotoStatusResult result = photoQueryService.getPhotoStatus(roomId, photoPlaceId);
-        return ResponseEntity.ok(new ApiResponse<>(true, 200, "현황 조회 성공", PhotoStatusResponse.from(result)));
+        return ResponseEntity.ok(new ApiResponse<>(true, 200, "현황 조회를 성공하였습니다.", PhotoStatusResponse.from(result)));
     }
 }

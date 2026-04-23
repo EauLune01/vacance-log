@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import vacance_log.sogang.diary.domain.Diary;
 import vacance_log.sogang.diary.domain.DiaryType;
 import vacance_log.sogang.diary.repository.DiaryRepository;
+import vacance_log.sogang.diary.service.DiaryVectorService;
 import vacance_log.sogang.global.config.rabbitMq.RabbitMqConfig;
 import vacance_log.sogang.global.exception.diary.DiaryNotFoundException;
 import vacance_log.sogang.global.exception.room.RoomNotFoundException;
@@ -21,6 +22,8 @@ import vacance_log.sogang.user.domain.User;
 
 import java.util.List;
 
+import static vacance_log.sogang.diary.domain.QDiary.diary;
+
 
 @Slf4j
 @Component
@@ -31,6 +34,7 @@ public class DiaryConsumer {
     private final DiaryRepository diaryRepository;
     private final OpenAiService openAiService;
     private final NotificationService notificationService;
+    private final DiaryVectorService diaryVectorService;
 
     @RabbitListener(queues = RabbitMqConfig.DIARY_GENERATE_QUEUE)
     @Transactional
@@ -76,6 +80,7 @@ public class DiaryConsumer {
 
         diary.updateContent(essay);
         diary.updateEmbedding(embedding);
+        diaryVectorService.upsert(diary);
     }
 
     // 2. 그룹 다이어리 생성
@@ -91,5 +96,6 @@ public class DiaryConsumer {
         groupDiary.updateEmbedding(embedding);
 
         diaryRepository.save(groupDiary);
+        diaryVectorService.upsert(groupDiary);
     }
 }

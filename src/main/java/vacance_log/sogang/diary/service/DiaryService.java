@@ -31,8 +31,12 @@ public class DiaryService {
 
     public DiaryDetailResult getDiaryDetail(DiaryQueryCommand command) {
         Room room = getRoomOrThrow(command.getRoomId());
-        String content = findDiaryContent(room, command);
-        List<String> imageUrls = findImageUrls(room, command);
+        User user = (command.getType() == DiaryType.INDIVIDUAL && command.getUserId() != null)
+                ? userRepository.getReferenceById(command.getUserId())
+                : null;
+
+        String content = findDiaryContent(room, command.getType(), user);
+        List<String> imageUrls = findImageUrls(room, command.getType(), user);
 
         return DiaryDetailResult.of(
                 room.getTitle(),
@@ -42,19 +46,14 @@ public class DiaryService {
         );
     }
 
-    private String findDiaryContent(Room room, DiaryQueryCommand command) {
-        User user = (command.getType() == DiaryType.INDIVIDUAL)
-                ? userRepository.getReferenceById(command.getUserId())
-                : null;
-
-        return diaryRepository.findContent(room, command.getType(), user)
+    private String findDiaryContent(Room room, DiaryType type, User user) {
+        return diaryRepository.findContent(room, type, user)
                 .orElseThrow(() -> new DiaryNotFoundException("해당 다이어리를 찾을 수 없습니다."));
     }
 
-
-    private List<String> findImageUrls(Room room, DiaryQueryCommand command) {
-        List<Photo> photos = (command.getType() == DiaryType.INDIVIDUAL)
-                ? photoRepository.findAllByRoomAndUser(room, userRepository.getReferenceById(command.getUserId()))
+    private List<String> findImageUrls(Room room, DiaryType type, User user) {
+        List<Photo> photos = (type == DiaryType.INDIVIDUAL && user != null)
+                ? photoRepository.findAllByRoomAndUser(room, user)
                 : photoRepository.findAllByRoom(room);
 
         return photos.stream()
