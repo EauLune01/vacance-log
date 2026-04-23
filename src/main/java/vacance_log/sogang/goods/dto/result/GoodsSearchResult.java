@@ -1,11 +1,13 @@
 package vacance_log.sogang.goods.dto.result;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import vacance_log.sogang.diary.dto.result.DiaryDetailResult;
 import java.util.List;
 
 @Getter
+@Builder
 @AllArgsConstructor
 public class GoodsSearchResult {
     private final String answer;

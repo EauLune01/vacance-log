@@ -44,13 +44,10 @@ public class DiaryConsumer {
         Room room = roomRepository.findByIdWithUserRooms(roomId)
                 .orElseThrow(() -> new RoomNotFoundException("Room not found."));
 
-        // 1. 개인 다이어리 업데이트
-        room.getUserRooms().forEach(ur -> updateIndividualDiaryContent(room, ur.getUser()));
-
-        // 2. 그룹 다이어리 생성
+        // 1. 그룹 다이어리 생성
         createGroupDiary(room);
 
-        // 3. 완료 알림 발송
+        // 2. 완료 알림 발송
         sendDiaryCompletionNotification(room);
 
         log.info("✅ [Async End] Diaries completed for Room: {}", roomId);
@@ -63,27 +60,8 @@ public class DiaryConsumer {
         );
     }
 
-    // 1. 개인 다이어리 업데이트
-    private void updateIndividualDiaryContent(Room room, User user) {
-        List<Photo> photos = photoRepository.findAllByRoomAndUser(room, user);
 
-        if (photos.isEmpty()) {
-            log.warn("⚠️ No photos found for user: {} in room: {}", user.getId(), room.getId());
-            return;
-        }
-
-        String essay = openAiService.generateFinalEssay(photos, DiaryType.INDIVIDUAL);
-        float[] embedding = openAiService.createEmbedding(essay);
-
-        Diary diary = diaryRepository.findByRoomAndUserAndType(room, user, DiaryType.INDIVIDUAL)
-                .orElseThrow(() -> new DiaryNotFoundException("Individual diary shell not found."));
-
-        diary.updateContent(essay);
-        diary.updateEmbedding(embedding);
-        diaryVectorService.upsert(diary);
-    }
-
-    // 2. 그룹 다이어리 생성
+    // 그룹 다이어리 생성
     private void createGroupDiary(Room room) {
         List<Photo> allPhotos = photoRepository.findAllByRoom(room);
         if (allPhotos.isEmpty()) return;
