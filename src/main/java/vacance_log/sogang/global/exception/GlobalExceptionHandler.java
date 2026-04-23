@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import vacance_log.sogang.global.dto.response.ApiResponse;
 import vacance_log.sogang.global.exception.diary.DiaryNotFoundException;
+import vacance_log.sogang.global.exception.embedding.EmbeddingFailedException;
 import vacance_log.sogang.global.exception.image.InvalidImageUrlException;
 import vacance_log.sogang.global.exception.photo.PhotoNotFoundException;
 import vacance_log.sogang.global.exception.photoPlace.PhotoPlaceNotFoundException;
@@ -68,6 +69,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TravelAlreadyFinishedException.class)
     protected ResponseEntity<ApiResponse<?>> handleTravelFinishedException(TravelAlreadyFinishedException e) {
         return buildErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(EmbeddingFailedException.class)
+    protected ResponseEntity<ApiResponse<?>> handleEmbeddingFailedException(EmbeddingFailedException e) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

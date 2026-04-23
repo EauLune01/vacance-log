@@ -12,6 +12,7 @@ import org.springframework.data.redis.domain.geo.GeoReference;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import vacance_log.sogang.global.exception.room.RoomNotFoundException;
+import vacance_log.sogang.place.dto.command.LocationUpdateCommand;
 import vacance_log.sogang.place.dto.event.LocationEvent;
 import vacance_log.sogang.place.dto.event.PlaceCandidate;
 import vacance_log.sogang.room.domain.Room;
@@ -40,18 +41,18 @@ public class LocationService {
     /**
      * Process user location update
      */
-    public void processLocationUpdate(Long roomId, Double lat, Double lng) {
-        Room room = getRoomOrThrow(roomId);
+    public void processLocationUpdate(LocationUpdateCommand command) {
+        Room room = getRoomOrThrow(command.getRoomId());
 
-        List<PlaceCandidate> rawCandidates = detectNearbyPlaces(room, lat, lng);
+        List<PlaceCandidate> rawCandidates = detectNearbyPlaces(room, command.getLat(), command.getLng());
 
         List<PlaceCandidate> validCandidates = filterValidCandidates(room, rawCandidates);
 
-        if (shouldSkipRecommendation(roomId, validCandidates)) {
+        if (shouldSkipRecommendation(command.getRoomId(), validCandidates)) {
             return;
         }
 
-        publishAndTrack(roomId, validCandidates, lat, lng);
+        publishAndTrack(command.getRoomId(), validCandidates, command.getLat(), command.getLng());
     }
 
     /* =========================

@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vacance_log.sogang.global.dto.response.ApiResponse;
+import vacance_log.sogang.room.dto.response.TravelFinishResponse;
 import vacance_log.sogang.room.service.RoomService;
 
 @Tag(name = "Room", description = "여행 방 관리 및 종료 API")
@@ -30,9 +31,10 @@ public class RoomController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "이미 종료된 방이거나 상태를 변경할 수 없음")
     })
     @PostMapping("/{roomId}/finish")
-    public ResponseEntity<ApiResponse<String>> finishTravel(@PathVariable Long roomId) {
+    public ResponseEntity<ApiResponse<TravelFinishResponse>> finishTravel(
+            @Parameter(description = "종료할 방 ID", example = "1")
+            @PathVariable Long roomId) {
         roomService.initiateFinishProcess(roomId);
-        log.info("🚀 [Travel Finish Initiated] RoomId: {} -> Processing started.", roomId);
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse<>(true, 202, "여행 종료 프로세스가 시작되었습니다. 다이어리가 완성되면 알림이 발송됩니다.", "PROCESSING"));
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body(new ApiResponse<>(true, 202, "여행 종료 프로세스가 시작되었습니다. 다이어리가 완성되면 알림이 발송됩니다.",TravelFinishResponse.of(roomId, "PROCESSING")));
     }
 }

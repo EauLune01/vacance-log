@@ -26,7 +26,7 @@ public class DiaryRepositoryImpl implements DiaryRepositoryCustom {
                         .where(
                                 diary.room.eq(room),
                                 diary.type.eq(type),
-                                eqUser(user) // 🎯 동적 조건 추출
+                                eqUser(user)
                         )
                         .fetchOne()
         );
