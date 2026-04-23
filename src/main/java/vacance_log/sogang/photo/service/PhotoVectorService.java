@@ -23,7 +23,7 @@ public class PhotoVectorService {
         metadata.put("photoId", photo.getId());
         metadata.put("roomId", photo.getRoom().getId());
         metadata.put("userId", photo.getUser().getId());
-        metadata.put("type", "PHOTO");
+        metadata.put("type", "INDIVIDUAL");
 
         log.info("📤 [Vector DB] Upserting Photo Embedding - ID: {}", photo.getId());
 

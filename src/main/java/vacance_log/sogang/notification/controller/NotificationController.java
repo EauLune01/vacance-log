@@ -17,7 +17,7 @@ import vacance_log.sogang.notification.service.NotificationService;
 @Tag(name = "Notification", description = "SSE 기반 실시간 알림 API")
 @Slf4j
 @RestController
-@RequestMapping("/api/notifications")
+@RequestMapping("/api/notification")
 @RequiredArgsConstructor
 public class NotificationController {
 
@@ -41,7 +41,7 @@ public class NotificationController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    @GetMapping(value = "/subscribe/{userId}", produces = "text/event-stream;charset=UTF-8")
+    @GetMapping(value = "/{userId}/subscribe", produces = "text/event-stream;charset=UTF-8")
     public SseEmitter subscribe(
             @Parameter(description = "구독할 사용자 ID", example = "1")
             @PathVariable Long userId

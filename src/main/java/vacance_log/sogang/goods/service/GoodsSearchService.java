@@ -107,11 +107,13 @@ public class GoodsSearchService {
 
         return b.group(
                 b.or(
+                        // 사진 메모 포함 내가 올린 모든 개인 데이터
                         b.and(
                                 b.eq("userId", userId),
-                                b.or(b.eq("type", "INDIVIDUAL"), b.eq("type", "PHOTO"))
+                                b.eq("type", "INDIVIDUAL")
                         ),
 
+                        // 내가 속한 방의 그룹 다이어리
                         b.and(
                                 b.in("roomId", myRoomIds.toArray()),
                                 b.eq("type", "GROUP")

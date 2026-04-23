@@ -17,7 +17,7 @@ import vacance_log.sogang.room.service.RoomService;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1/rooms")
+@RequestMapping("/api/room")
 public class RoomController {
 
     private final RoomService roomService;
