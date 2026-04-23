@@ -1,0 +1,82 @@
+[
+  {
+    "placeCode": "ZOCALO",
+    "city": "Mexico City",
+    "theme": "HISTORY",
+    "timeTag": "MORNING",
+    "personas": ["EXPLORER"],
+    "content": "The Zócalo is the heart of Mexico City. Witnessing the massive Mexican flag being raised at 6 AM is a solemn and powerful experience, surrounded by the Metropolitan Cathedral and the National Palace."
+  },
+  {
+    "placeCode": "BELLAS_ARTES",
+    "city": "Mexico City",
+    "theme": "PHOTO",
+    "timeTag": "ALWAYS",
+    "personas": ["PHOTO_TRAVELER", "EXPLORER"],
+    "content": "This white marble palace is an architectural masterpiece. Inside, you can find world-famous murals by Diego Rivera. The Art Deco interior and the crystal roof provide incredible backdrops for photography."
+  },
+  {
+    "placeCode": "FRIDA_KAHLO",
+    "city": "Mexico City",
+    "theme": "HISTORY",
+    "timeTag": "MORNING",
+    "personas": ["EXPLORER", "RELAXER"],
+    "content": "The 'Casa Azul' is the birthplace and lifelong home of Frida Kahlo. The vibrant cobalt blue walls and her personal belongings, including her studio and bed, offer an intimate look into her artistic soul."
+  },
+  {
+    "placeCode": "CHAPULTEPEC",
+    "city": "Mexico City",
+    "theme": "PHOTO",
+    "timeTag": "AFTERNOON",
+    "personas": ["PHOTO_TRAVELER", "EXPLORER"],
+    "content": "Chapultepec Castle sits atop a hill and served as a royal residence. It offers the absolute best panoramic view of Paseo de la Reforma and the skyscrapers of the modern city."
+  },
+  {
+    "placeCode": "TEOTIHUACAN",
+    "city": "Mexico City",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "The 'City of the Gods' features the massive Pyramid of the Sun and Moon. Walk down the Avenue of the Dead and imagine the scale of this pre-Hispanic metropolis that once housed over 100,000 people."
+  },
+  {
+    "placeCode": "ANTHRO_MUSEUM",
+    "city": "Mexico City",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "The National Museum of Anthropology is a world-class institution. The Aztec Sun Stone (Calendar Stone) is the highlight. The outdoor courtyard with its massive umbrella fountain is also an architectural wonder."
+  },
+  {
+    "placeCode": "COYOACAN_MARKET",
+    "city": "Mexico City",
+    "theme": "FOOD",
+    "timeTag": "ALWAYS",
+    "personas": ["FOODIE"],
+    "content": "A bustling traditional market where you must try the famous 'Tostadas de Coyoacán'. It's the best place to experience the local colors, smells, and authentic flavors of Mexican street food."
+  },
+  {
+    "placeCode": "XOCHIMILCO",
+    "city": "Mexico City",
+    "theme": "RELAX",
+    "timeTag": "AFTERNOON",
+    "personas": ["RELAXER", "PHOTO_TRAVELER"],
+    "content": "Floating through the ancient Aztec canals on a colorful 'Trajenera' boat is a festive experience. You can buy corn, drinks, and even hire a Mariachi band to play for you while you drift."
+  },
+  {
+    "placeCode": "GUADALUPE",
+    "city": "Mexico City",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "The Basilica of Our Lady of Guadalupe is Mexico's most important religious site. You can see the original tilma (cloak) of Saint Juan Diego and witness the devotion of thousands of pilgrims."
+  },
+  {
+    "placeCode": "REFORMA",
+    "city": "Mexico City",
+    "theme": "PHOTO",
+    "timeTag": "ALWAYS",
+    "personas": ["PHOTO_TRAVELER"],
+    "content": "Paseo de la Reforma is the city's grandest boulevard. The Angel of Independence monument is the centerpiece. It's especially beautiful on Sundays when the road is closed for cyclists and runners."
+  }
+]

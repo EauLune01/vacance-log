@@ -1,0 +1,82 @@
+[
+  {
+    "placeCode": "EXPO_70_PARK",
+    "city": "Osaka",
+    "theme": "PHOTO",
+    "timeTag": "MORNING",
+    "personas": ["PHOTO_TRAVELER", "RELAXER"],
+    "content": "The iconic Tower of the Sun designed by Taro Okamoto is a masterpiece of avant-garde art. The park is vast, offering tranquil seasonal gardens that are perfect for a morning stroll away from the city center."
+  },
+  {
+    "placeCode": "UMEDA_SKY",
+    "city": "Osaka",
+    "theme": "PHOTO",
+    "timeTag": "NIGHT",
+    "personas": ["PHOTO_TRAVELER"],
+    "content": "The Floating Garden Observatory at the top of Umeda Sky Building provides a 360-degree open-air panoramic view. It is especially romantic at night when the 'Lumi Sky Walk' glows like a galaxy under your feet."
+  },
+  {
+    "placeCode": "OSAKA_CASTLE",
+    "city": "Osaka",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "Built by Toyotomi Hideyoshi, Osaka Castle is a symbol of Japanese unification. The museum inside tells the dramatic story of the Siege of Osaka, and the surrounding stone walls are engineering marvels of the Edo period."
+  },
+  {
+    "placeCode": "GLICO_SIGN",
+    "city": "Osaka",
+    "theme": "PHOTO",
+    "timeTag": "NIGHT",
+    "personas": ["PHOTO_TRAVELER"],
+    "content": "Located in the heart of Dotonbori, the Glico Running Man is Osaka's most famous neon sign. Capture it from the Ebisu Bridge, and wait for the background to cycle through various world landmarks."
+  },
+  {
+    "placeCode": "NAMBA_PARKS",
+    "city": "Osaka",
+    "theme": "SHOPPING",
+    "timeTag": "AFTERNOON",
+    "personas": ["SHOPPER", "RELAXER"],
+    "content": "This shopping complex features a stunning 8-level rooftop garden that looks like a natural canyon. It is an architectural oasis where you can enjoy luxury shopping and nature simultaneously."
+  },
+  {
+    "placeCode": "KUROMON_MARKET",
+    "city": "Osaka",
+    "theme": "FOOD",
+    "timeTag": "MORNING",
+    "personas": ["FOODIE"],
+    "content": "Known as 'Osaka's Kitchen', Kuromon Market is the place to eat fresh. Don't miss the grilled scallops, fatty tuna (Otoro) skewers, and the giant white strawberries if they are in season."
+  },
+  {
+    "placeCode": "NAMBA_YASAKA",
+    "city": "Osaka",
+    "theme": "PHOTO",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER", "PHOTO_TRAVELER"],
+    "content": "The Shishi-den (Lion Head stage) stands 12 meters high and is believed to swallow evil spirits and bring good luck. It is one of the most unique and visually striking shrines in all of Japan."
+  },
+  {
+    "placeCode": "TSUTENKAKU",
+    "city": "Osaka",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "The landmark of the Shinsekai district. While it offers great views, the real charm is Billiken, the 'God of Things as They Ought to Be.' Rubbing the soles of his feet is said to grant a wish."
+  },
+  {
+    "placeCode": "KUSHIKATSU_BENKEI",
+    "city": "Osaka",
+    "theme": "FOOD",
+    "timeTag": "DINNER",
+    "personas": ["FOODIE"],
+    "content": "Experience the soul food of Osaka at Kushikatsu Benkei. Skewered meat and vegetables are deep-fried to perfection. Just remember the golden rule of Shinsekai: 'No double-dipping in the sauce!'"
+  },
+  {
+    "placeCode": "TORAYANKE",
+    "city": "Osaka",
+    "theme": "FOOD",
+    "timeTag": "NIGHT",
+    "personas": ["FOODIE", "RELAXER"],
+    "content": "A cozy, local izakaya in Namba that is a true sanctuary for Hanshin Tigers fans. The walls are covered with baseball memorabilia. It's the best place to talk sports over highballs and delicious yakitori."
+  }
+]

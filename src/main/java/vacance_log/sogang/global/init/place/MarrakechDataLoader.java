@@ -1,4 +1,4 @@
-package vacance_log.sogang.global.init;
+package vacance_log.sogang.global.init.place;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class MarrakechDataLoader implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        if (cityRepository.count() > 0) {
+        if (cityRepository.findByName("Marrakech").isPresent()) {
             log.info("⏩ Marrakech data already exists. Skipping data loading.");
             return;
         }
