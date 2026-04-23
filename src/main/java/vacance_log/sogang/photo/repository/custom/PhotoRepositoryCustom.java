@@ -6,5 +6,5 @@ import java.util.Optional;
 
 public interface PhotoRepositoryCustom {
     List<Photo> findPhotosByPlace(Long roomId, Long photoPlaceId);
-    Optional<Photo> findByIdWithRoomAndUser(Long photoId);
+    Optional<Photo> findByIdDetail(Long photoId);
 }

@@ -31,7 +31,7 @@ public class PhotoAnalysisConsumer {
         log.info("📩 [Async Analysis] Event received - PhotoId: {}", event.getPhotoId());
 
         // 1. Photo 엔티티 조회
-        Photo photo = photoRepository.findByIdWithRoomAndUser(event.getPhotoId())
+        Photo photo = photoRepository.findByIdDetail(event.getPhotoId())
                 .orElseThrow(() -> {
                     log.error("❌ [Extraction Failed] Photo not found for ID: {}", event.getPhotoId());
                     return new PhotoNotFoundException("Photo not found.");
@@ -40,15 +40,18 @@ public class PhotoAnalysisConsumer {
         Room room = photo.getRoom();
         User user = photo.getUser();
 
+        String placeCode = (photo.getPhotoPlace() != null) ? photo.getPhotoPlace().getPlaceCode() : null;
+
         try {
-            // 2. GPT-4o Vision 분석: 사진에 대한 짧은 시적 메모 생성
-            String aiMemo = openAiService.generateShortMemo(photo.getS3Url());
+            // 2. GPT-4o Vision 분석: 장소 정보(RAG)를 포함하여 짧은 시적 메모 생성
+            String aiMemo = openAiService.generateShortMemo(photo.getS3Url(), placeCode);
             photo.updateDescription(aiMemo);
 
             log.info("✅ [Analysis Success] PhotoId: {} -> Memo: {}", photo.getId(), aiMemo);
 
         } catch (Exception e) {
-            log.warn("⚠️ [Analysis Failed] GPT Error for PhotoId: {}. Falling back to default.", event.getPhotoId());
+            log.warn("⚠️ [Analysis Failed] GPT Error for PhotoId: {}. Falling back to default. error={}",
+                    event.getPhotoId(), e.getMessage());
             photo.updateDescription("Memorable moment in " + room.getCity().getName());
         }
 
@@ -68,5 +71,4 @@ public class PhotoAnalysisConsumer {
                         }
                 );
     }
-
 }

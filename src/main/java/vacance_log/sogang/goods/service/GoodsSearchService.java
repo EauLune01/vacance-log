@@ -49,22 +49,38 @@ public class GoodsSearchService {
 
         String rawQuery = command.getQuery();
         String optimizedQuery = openAiService.extractSearchKeywords(rawQuery);
-
         String finalSearchQuery = StringUtils.hasText(optimizedQuery) ? optimizedQuery : rawQuery;
-        log.info("🔍 [RAG Search] Final Query for Vector Store: [{}]", finalSearchQuery);
 
-        Filter.Expression finalFilter = createFilter(command.getUserId(), myRoomIds);
+        Filter.Expression diaryFilter = createFilter(command.getUserId(), myRoomIds);
+        FilterExpressionBuilder b = new FilterExpressionBuilder();
 
-        List<Document> documents = vectorStore.similaritySearch(
+        List<Document> diaryDocs = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(finalSearchQuery)
                         .topK(3)
                         .similarityThreshold(0.5)
-                        .filterExpression(finalFilter)
+                        .filterExpression(diaryFilter)
                         .build()
         );
 
-        List<DiaryDetailResult> diaryResults = documents.stream()
+        List<Document> knowledgeDocs = vectorStore.similaritySearch(
+                SearchRequest.builder()
+                        .query(finalSearchQuery)
+                        .topK(2)
+                        .similarityThreshold(0.6)
+                        .filterExpression(b.eq("type", "KNOWLEDGE").build())
+                        .build()
+        );
+
+        String userContext = diaryDocs.isEmpty() ? "No related diary found." :
+                diaryDocs.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
+
+        String systemKnowledge = knowledgeDocs.isEmpty() ? "" :
+                knowledgeDocs.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
+
+        String aiAnswer = openAiService.generateAnswerFromDiaries(rawQuery, userContext, systemKnowledge, user.getNickname());
+
+        List<DiaryDetailResult> diaryResults = diaryDocs.stream()
                 .map(doc -> {
                     Long roomId = Long.parseLong(doc.getMetadata().get("roomId").toString());
                     DiaryType type = DiaryType.valueOf(doc.getMetadata().get("type").toString());
@@ -74,12 +90,7 @@ public class GoodsSearchService {
                 .distinct()
                 .toList();
 
-        String context = documents.isEmpty() ? "No related diary found." :
-                documents.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
-
-        String aiAnswer = openAiService.generateAnswerFromDiaries(rawQuery, context, user.getNickname());
-
-        return GoodsSearchResult.of(aiAnswer, diaryResults, !documents.isEmpty());
+        return GoodsSearchResult.of(aiAnswer, diaryResults, !diaryDocs.isEmpty());
     }
 
     private Filter.Expression createFilter(Long userId, List<Long> myRoomIds) {

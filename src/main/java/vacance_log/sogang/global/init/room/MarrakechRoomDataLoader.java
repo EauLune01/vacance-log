@@ -17,6 +17,7 @@ import vacance_log.sogang.room.repository.UserRoomRepository;
 import vacance_log.sogang.user.domain.User;
 import vacance_log.sogang.user.repository.UserRepository;
 
+/*
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -57,3 +58,4 @@ public class MarrakechRoomDataLoader implements CommandLineRunner {
         log.info("Successfully created 'Marrakech Trip' room! (Host: Yihyun Jo, Members: Yena Choi, Seoyeon Yoon, Doyoung Kim)");
     }
 }
+*/
