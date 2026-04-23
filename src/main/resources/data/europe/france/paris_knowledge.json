@@ -1,0 +1,82 @@
+[
+  {
+    "placeCode": "LOUVRE",
+    "city": "Paris",
+    "theme": "HISTORY",
+    "timeTag": "MORNING",
+    "personas": ["EXPLORER"],
+    "content": "The Louvre is the world's largest art museum. For the best experience, start with the Denon wing to see the Mona Lisa and Winged Victory of Samothrace before the crowds arrive."
+  },
+  {
+    "placeCode": "ORSAY",
+    "city": "Paris",
+    "theme": "PHOTO",
+    "timeTag": "AFTERNOON",
+    "personas": ["PHOTO_TRAVELER", "EXPLORER"],
+    "content": "Housed in a former railway station, the Orsay Museum features incredible Impressionist works. Don't forget to take a silhouette photo behind the giant clock window on the top floor."
+  },
+  {
+    "placeCode": "EIFFEL",
+    "city": "Paris",
+    "theme": "PHOTO",
+    "timeTag": "NIGHT",
+    "personas": ["PHOTO_TRAVELER"],
+    "content": "The Eiffel Tower is most magical at night. For the best view of the hourly light show, head to Place du Trocadéro where you can see the entire tower sparkling against the skyline."
+  },
+  {
+    "placeCode": "LE_VRAI_PARIS",
+    "city": "Paris",
+    "theme": "FOOD",
+    "timeTag": "ALWAYS",
+    "personas": ["FOODIE", "PHOTO_TRAVELER"],
+    "content": "Located in Montmartre, this charming cafe is famous for its massive purple flower decorations. It's the perfect spot for a quintessential Parisian breakfast or an evening glass of wine."
+  },
+  {
+    "placeCode": "ARC_DE_TRIOMPHE",
+    "city": "Paris",
+    "theme": "HISTORY",
+    "timeTag": "AFTERNOON",
+    "personas": ["EXPLORER"],
+    "content": "A symbol of French national pride. Make sure to climb to the rooftop for a unique view of the 12 avenues radiating from the arch, including the famous Champs-Élysées."
+  },
+  {
+    "placeCode": "LUXEMBOURG",
+    "city": "Paris",
+    "theme": "RELAX",
+    "timeTag": "AFTERNOON",
+    "personas": ["RELAXER"],
+    "content": "The Luxembourg Gardens are the perfect place to unwind. Rent a small wooden sailboat at the Grand Bassin pond or sit in the iconic green chairs and enjoy the quiet garden atmosphere."
+  },
+  {
+    "placeCode": "NOTRE_DAME",
+    "city": "Paris",
+    "theme": "HISTORY",
+    "timeTag": "ALWAYS",
+    "personas": ["EXPLORER"],
+    "content": "A masterpiece of French Gothic architecture. Look for 'Point Zéro' in the cobblestones outside—the official center of Paris from which all distances in France are measured."
+  },
+  {
+    "placeCode": "SACRE_COEUR",
+    "city": "Paris",
+    "theme": "PHOTO",
+    "timeTag": "NIGHT",
+    "personas": ["PHOTO_TRAVELER", "RELAXER"],
+    "content": "The Basilica of the Sacred Heart offers the highest point in Paris. The steps of Sacré-Cœur at sunset provide a breathtaking panoramic view of the city as the lights turn on."
+  },
+  {
+    "placeCode": "LAFAYETTE",
+    "city": "Paris",
+    "theme": "SHOPPING",
+    "timeTag": "ALWAYS",
+    "personas": ["SHOPPER", "PHOTO_TRAVELER"],
+    "content": "More than just a department store, Galeries Lafayette features a stunning Art Nouveau glass dome. The rooftop terrace is free to access and offers one of the best views of the Opera House and Eiffel Tower."
+  },
+  {
+    "placeCode": "MONET_MUSEUM",
+    "city": "Paris",
+    "theme": "RELAX",
+    "timeTag": "MORNING",
+    "personas": ["RELAXER", "EXPLORER"],
+    "content": "Musée Marmottan Monet houses the largest collection of Claude Monet's works. It's a peaceful alternative to the larger museums, offering an intimate look at the birth of Impressionism."
+  }
+]
