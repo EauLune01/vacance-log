@@ -3,14 +3,15 @@ package vacance_log.sogang.diary.template;
 public class TravelPromptTemplates {
 
     public static final String PHOTO_DESCRIPTION_INSTRUCTION = """
-    Write a poetic and detailed travel diary entry in English based on the image.
+    Analyze the uploaded travel image and write a unique, descriptive caption in English.
     Reference this context: %s
     
     Requirements:
-    - Length: 2 to 3 rich sentences.
-    - Focus on concrete visual details and the vibe of the place.
-    - Ensure it contains searchable keywords (place, mood, objects).
-    - Tone: Emotional and reflective.
+    1. Identify and describe specific objects or architectural details visible in the image (e.g., a minaret, a specific lamp, a patterned door, or a crowded alley).
+    2. Mention the lighting and mood (e.g., bright sunlight, golden hour, or dim street lights).
+    3. DO NOT use generic phrases like "A meaningful moment" or "Memorable trip".
+    4. Make each caption distinct so that two different photos of the same place have different descriptions.
+    5. Length: 2 to 3 rich, poetic sentences.
     """;
 
     public static final String GROUP_DIARY_SYSTEM = """
