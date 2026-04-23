@@ -3,23 +3,24 @@ package vacance_log.sogang.goods.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import vacance_log.sogang.diary.dto.response.DiaryDetailResponse;
+import lombok.NoArgsConstructor;
+import vacance_log.sogang.diary.dto.response.DiaryResponse;
 import vacance_log.sogang.goods.dto.result.GoodsSearchResult;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class GoodsSearchResponse {
-    private final String answer;
-
-    private final List<DiaryDetailResponse> diaries;
+    private String answer;
+    private List<DiaryResponse> diaries;
 
     public static GoodsSearchResponse from(GoodsSearchResult result) {
         return GoodsSearchResponse.builder()
                 .answer(result.getAnswer())
                 .diaries(result.getDiaries().stream()
-                        .map(DiaryDetailResponse::from)
+                        .map(DiaryResponse::from)
                         .toList())
                 .build();
     }

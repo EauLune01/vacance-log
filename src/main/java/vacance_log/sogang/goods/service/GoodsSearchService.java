@@ -12,7 +12,7 @@ import org.springframework.util.StringUtils;
 import vacance_log.sogang.diary.domain.DiaryType;
 import vacance_log.sogang.diary.dto.command.DiaryQueryCommand;
 import vacance_log.sogang.diary.dto.result.DiaryDetailResult;
-import vacance_log.sogang.diary.service.DiaryService;
+import vacance_log.sogang.diary.service.DiaryQueryService;
 import vacance_log.sogang.global.exception.user.UserNotFoundException;
 import vacance_log.sogang.global.service.OpenAiService;
 import vacance_log.sogang.goods.dto.command.GoodsSearchCommand;
@@ -23,7 +23,6 @@ import vacance_log.sogang.user.repository.UserRepository;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,7 +31,7 @@ import java.util.stream.Collectors;
 public class GoodsSearchService {
 
     private final VectorStore vectorStore;
-    private final DiaryService diaryService;
+    private final DiaryQueryService diaryQueryService;
     private final OpenAiService openAiService;
     private final UserRepository userRepository;
     private final UserRoomRepository userRoomRepository;
@@ -82,10 +81,20 @@ public class GoodsSearchService {
 
         List<DiaryDetailResult> diaryResults = diaryDocs.stream()
                 .map(doc -> {
+                    // 1. 메타데이터에서 정보 추출
                     Long roomId = Long.parseLong(doc.getMetadata().get("roomId").toString());
                     DiaryType type = DiaryType.valueOf(doc.getMetadata().get("type").toString());
-                    Long diaryUserId = (type == DiaryType.INDIVIDUAL) ? command.getUserId() : null;
-                    return diaryService.getDiaryDetail(DiaryQueryCommand.of(roomId, diaryUserId, type));
+
+                    // 2. 타입에 따라 'DiaryQueryService'의 새로운 메서드 호출
+                    if (type == DiaryType.INDIVIDUAL) {
+                        // ✅ 개인 다이어리 로직 호출
+                        return diaryQueryService.getPersonalDiary(
+                                DiaryQueryCommand.of(roomId, command.getUserId(), type)
+                        );
+                    } else {
+                        // ✅ 그룹 다이어리 로직 호출
+                        return diaryQueryService.getGroupDiary(roomId);
+                    }
                 })
                 .distinct()
                 .toList();
@@ -95,10 +104,18 @@ public class GoodsSearchService {
 
     private Filter.Expression createFilter(Long userId, List<Long> myRoomIds) {
         FilterExpressionBuilder b = new FilterExpressionBuilder();
+
         return b.group(
                 b.or(
-                        b.and(b.eq("userId", userId), b.eq("type", "INDIVIDUAL")),
-                        b.and(b.in("roomId", myRoomIds.toArray()), b.eq("type", "GROUP"))
+                        b.and(
+                                b.eq("userId", userId),
+                                b.or(b.eq("type", "INDIVIDUAL"), b.eq("type", "PHOTO"))
+                        ),
+
+                        b.and(
+                                b.in("roomId", myRoomIds.toArray()),
+                                b.eq("type", "GROUP")
+                        )
                 )
         ).build();
     }

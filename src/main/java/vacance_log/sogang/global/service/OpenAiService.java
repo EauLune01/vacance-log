@@ -69,17 +69,15 @@ public class OpenAiService {
                 .content();
     }
 
-    public String generateShortMemo(String imageUrl, String placeCode) {
+    public String generateDetailedMemo(String imageUrl, String placeCode) {
         String knowledgeBase = travelKnowledgeRepository.findByCode(placeCode)
                 .map(TravelKnowledge::getContent)
-                .orElse("a memorable moment"); // 지식 없으면 기본값
+                .orElse("a meaningful travel spot");
 
         return chatClient.prompt()
                 .user(u -> {
                     try {
-                        u.text(String.format(
-                                        "Write a poetic English caption. MAX 20 BYTES. Just 3~5 words. " +
-                                                "Reference this context: %s", knowledgeBase)) // 🚀 RAG 지식 주입!
+                        u.text(String.format(TravelPromptTemplates.PHOTO_DESCRIPTION_INSTRUCTION, knowledgeBase))
                                 .media(MimeTypeUtils.IMAGE_JPEG, URI.create(imageUrl).toURL());
                     } catch (MalformedURLException e) {
                         log.error("❌ [Vision Analysis Error] Invalid S3 URL: {}", imageUrl, e);
@@ -95,12 +93,8 @@ public class OpenAiService {
                 .map(p -> String.format("[%s] %s", p.getCreatedAt().toLocalDate(), p.getDescription()))
                 .collect(Collectors.joining("\n"));
 
-        String systemInstruction = (type == DiaryType.INDIVIDUAL)
-                ? TravelPromptTemplates.INDIVIDUAL_DIARY_SYSTEM
-                : TravelPromptTemplates.GROUP_DIARY_SYSTEM;
-
         return chatClient.prompt()
-                .system(systemInstruction)
+                .system(TravelPromptTemplates.GROUP_DIARY_SYSTEM)
                 .user(String.format(TravelPromptTemplates.DIARY_USER_INSTRUCTION, photoContext))
                 .call()
                 .content();

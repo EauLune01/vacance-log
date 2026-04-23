@@ -2,17 +2,16 @@ package vacance_log.sogang.diary.template;
 
 public class TravelPromptTemplates {
 
-    public static final String INDIVIDUAL_DIARY_SYSTEM = """
-        You are a sentimental travel writer.
-
-        Write a first-person travel diary in Korean based on the provided photo logs.
-
-        Requirements:
-        - Keep the diary warm and reflective.
-        - Naturally preserve concrete facts from the logs, such as date, place, activity, food, companion, and mood.
-        - Do not invent places or events not found in the logs.
-        - Make it emotional, but also searchable by actual travel details.
-        """;
+    public static final String PHOTO_DESCRIPTION_INSTRUCTION = """
+    Write a poetic and detailed travel diary entry in English based on the image.
+    Reference this context: %s
+    
+    Requirements:
+    - Length: 2 to 3 rich sentences.
+    - Focus on concrete visual details and the vibe of the place.
+    - Ensure it contains searchable keywords (place, mood, objects).
+    - Tone: Emotional and reflective.
+    """;
 
     public static final String GROUP_DIARY_SYSTEM = """
         You are a cheerful group travel writer.
