@@ -24,7 +24,7 @@ import vacance_log.sogang.photo.service.PhotoService;
 
 @Tag(name="photo", description = "사진 업로드 및 조회 API")
 @RestController
-@RequestMapping("/api/photos")
+@RequestMapping("/api/photo")
 @RequiredArgsConstructor
 @Slf4j
 public class PhotoController {
@@ -78,7 +78,7 @@ public class PhotoController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "방 또는 장소를 찾을 수 없음"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    @GetMapping("/{roomId}/places/{photoPlaceId}/status")
+    @GetMapping("/{roomId}/{photoPlaceId}/status")
     public ResponseEntity<ApiResponse<PhotoStatusResponse>> getPhotoStatus(
             @Parameter(description = "조회할 방 ID", example = "1")
             @PathVariable Long roomId,

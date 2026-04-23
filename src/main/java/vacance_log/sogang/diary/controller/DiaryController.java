@@ -19,7 +19,7 @@ import vacance_log.sogang.global.dto.response.ApiResponse;
 
 @Tag(name = "Diary", description = "다이어리 상세 조회 API")
 @RestController
-@RequestMapping("/api/rooms")
+@RequestMapping("/api/diary")
 @RequiredArgsConstructor
 public class DiaryController {
 
@@ -34,7 +34,7 @@ public class DiaryController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "해당 유저의 여행 기록을 찾을 수 없음"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
-    @GetMapping("/{roomId}/diaries/INDIVIDUAL/{userId}")
+    @GetMapping("/{roomId}/personal/{userId}")
     public ResponseEntity<ApiResponse<PersonalDiaryResponse>> getIndividualDiary(
             @Parameter(description = "방 ID", example = "1") @PathVariable Long roomId,
             @Parameter(description = "유저 ID", example = "1") @PathVariable Long userId
@@ -45,7 +45,7 @@ public class DiaryController {
     }
 
     @Operation(summary = "그룹 다이어리 상세 조회", description = "방 멤버 전체의 통합 에세이와 전체 사진 리스트를 조회합니다.")
-    @GetMapping("/{roomId}/diaries/GROUP")
+    @GetMapping("/{roomId}/group")
     public ResponseEntity<ApiResponse<GroupDiaryResponse>> getGroupDiary(
             @Parameter(description = "방 ID", example = "1") @PathVariable Long roomId
     ) {

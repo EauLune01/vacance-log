@@ -31,7 +31,7 @@ public class GoodsSearchController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "유저 또는 기록을 찾을 수 없음"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
-    @PostMapping("/search/{userId}")
+    @PostMapping("/{userId}")
     public ResponseEntity<ApiResponse<GoodsSearchResponse>> searchGoods(
             @Parameter(description = "유저 ID", example = "1")
             @PathVariable Long userId,

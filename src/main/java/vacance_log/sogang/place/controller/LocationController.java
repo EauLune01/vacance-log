@@ -14,7 +14,7 @@ import vacance_log.sogang.place.service.LocationService;
 
 @Tag(name = "Location", description = "실시간 위치 기반 장소 감지 및 추천 API")
 @RestController
-@RequestMapping("/api/locations")
+@RequestMapping("/api/location")
 @RequiredArgsConstructor
 public class LocationController {
 
@@ -29,7 +29,7 @@ public class LocationController {
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "잘못된 위경도 값"),
             @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "404", description = "존재하지 않는 여행 방 ID")
     })
-    @PutMapping("/rooms/{roomId}")
+    @PutMapping("/{roomId}")
     public ResponseEntity<ApiResponse<String>> updateLocation(
             @Parameter(description = "여행 방 ID", example = "1")
             @PathVariable Long roomId,
