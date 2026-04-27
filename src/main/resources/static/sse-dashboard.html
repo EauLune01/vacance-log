@@ -47,7 +47,7 @@
 
         const es = new EventSource(`/api/notification/${userId}/subscribe`);
 
-        es.addEventListener("recommendation", (e) => {
+        es.addEventListener("PLACE_RECOMMENDATION", (e) => {
             const data = JSON.parse(e.data);
 
             const card = document.createElement("div");

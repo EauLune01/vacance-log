@@ -99,12 +99,8 @@ public class OpenAiService {
                 .content();
     }
 
-    /**
-     * 사용자 다이어리와 시스템 전문 지식을 결합하여 답변 생성 (Hybrid RAG)
-     */
     public String generateAnswerFromDiaries(String query, String userContext, String systemKnowledge, String nickname) {
 
-        // 1. 유저의 사적 기록과 시스템 지식을 구조적으로 결합
         StringBuilder combinedContext = new StringBuilder();
 
         combinedContext.append("### [User's Private Travel Records]\n")
@@ -117,7 +113,6 @@ public class OpenAiService {
                     .append("\n");
         }
 
-        // 2. 최종 프롬프트 실행
         return chatClient.prompt()
                 .system(String.format(TravelPromptTemplates.RAG_ANSWER_SYSTEM, nickname))
                 .user(String.format(TravelPromptTemplates.RAG_ANSWER_USER, combinedContext.toString(), query))

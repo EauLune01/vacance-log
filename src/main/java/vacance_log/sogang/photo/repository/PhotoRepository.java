@@ -15,4 +15,5 @@ public interface PhotoRepository extends JpaRepository<Photo,Long>, PhotoReposit
 
     @EntityGraph(attributePaths = {"room"})
     List<Photo> findAllByRoom(Room room);
+
 }

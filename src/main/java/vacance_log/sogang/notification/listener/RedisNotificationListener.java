@@ -7,9 +7,11 @@ import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import vacance_log.sogang.notification.dto.response.NotificationResponse;
 import vacance_log.sogang.notification.service.NotificationService;
 
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+
 
 @Slf4j
 @Component
@@ -17,25 +19,29 @@ import java.util.Map;
 public class RedisNotificationListener implements MessageListener {
 
     private final NotificationService notificationService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     @Override
-    @SuppressWarnings("unchecked")
     public void onMessage(Message message, @Nullable byte[] pattern) {
         try {
-            Map<String, Object> data = objectMapper.readValue(message.getBody(), Map.class);
+            byte[] body = message.getBody();
 
-            if (data != null) {
+            String raw = new String(body, StandardCharsets.UTF_8);
 
-                Long userId = Long.valueOf(String.valueOf(data.get("userId")));
-                String title = (String) data.get("title");
-                String content = (String) data.get("content");
+            log.info("📩 [Redis Raw] {}", raw);
 
-                notificationService.sendToClient(userId, title, content);
-                log.info("🔔 [Final Notification Sent] User ID: {}, Title: {}", userId, title);
-            }
+            NotificationResponse response =
+                    objectMapper.readValue(raw, NotificationResponse.class);
+
+            notificationService.sendToClient(response);
+
+            log.info("🔔 [SSE Sent] userId={}, type={}",
+                    response.getUserId(),
+                    response.getType()
+            );
+
         } catch (Exception e) {
-            log.error("❌ Final failure in Redis notification processing: {}", e.getMessage());
+            log.error("❌ Redis → SSE 실패", e);
         }
     }
 }

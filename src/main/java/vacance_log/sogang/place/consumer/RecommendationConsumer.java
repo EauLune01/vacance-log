@@ -75,7 +75,6 @@ public class RecommendationConsumer {
         String placeCode;
         String content;
 
-        // AI 응답에서 [장소코드]와 내용을 분리
         try {
             placeCode = aiResponse.substring(aiResponse.indexOf("[") + 1, aiResponse.indexOf("]")).trim();
             content = aiResponse.substring(aiResponse.indexOf("]") + 1).trim();
@@ -85,16 +84,34 @@ public class RecommendationConsumer {
             content = aiResponse;
         }
 
-        // 4. 추천 히스토리 저장
+        String toFinalPlaceCode = placeCode;
+        PhotoPlace photoPlace = photoPlaceRepository
+                .findByCityIdAndPlaceCode(room.getCity().getId(), placeCode)
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "존재하지 않는 PhotoPlace입니다. cityId="
+                                + room.getCity().getId()
+                                + ", placeCode="
+                                + toFinalPlaceCode
+                ));
+
+        Long photoPlaceId = photoPlace.getId();
+
         savePushHistory(room, placeCode, content);
 
         final String finalPlaceCode = placeCode;
         final String finalContent = content;
+        final Long finalPhotoPlaceId = photoPlaceId;
 
-        // 5. SSE를 통해 방 내 모든 유저에게 실시간 알림 전송
         room.getUserRooms().forEach(ur -> {
             try {
-                notificationService.send(ur.getUser().getId(), title, finalContent, finalPlaceCode);
+                notificationService.sendPlaceRecommendation(
+                        ur.getUser().getId(),
+                        room.getId(),
+                        title,
+                        finalContent,
+                        finalPlaceCode,
+                        finalPhotoPlaceId
+                );
             } catch (Exception e) {
                 log.warn("⚠️ 알림 전송 실패 (userId: {}): {}", ur.getUser().getId(), e.getMessage());
             }
