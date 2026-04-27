@@ -33,7 +33,7 @@ public class PhotoRepositoryImpl implements PhotoRepositoryCustom {
     public Optional<Photo> findByIdDetail(Long photoId) {
         return Optional.ofNullable(
                 queryFactory
-                        .selectFrom(photo)
+                        .selectFrom(photo).distinct()
                         .join(photo.room, room).fetchJoin()
                         .join(room.city).fetchJoin()
                         .join(photo.user, user).fetchJoin()

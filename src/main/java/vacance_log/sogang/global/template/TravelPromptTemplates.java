@@ -1,4 +1,4 @@
-package vacance_log.sogang.diary.template;
+package vacance_log.sogang.global.template;
 
 public class TravelPromptTemplates {
 

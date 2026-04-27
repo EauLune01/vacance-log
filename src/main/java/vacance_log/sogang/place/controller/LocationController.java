@@ -34,14 +34,8 @@ public class LocationController {
             @Parameter(description = "여행 방 ID", example = "1")
             @PathVariable Long roomId,
             @Valid @RequestBody LocationUpdateRequest request) {
-
         locationService.processLocationUpdate(request.toCommand(roomId));
-
-        return ResponseEntity.ok(new ApiResponse<>(
-                true,
-                200,
-                "위치 정보 업데이트 및 장소 감지 로직이 성공적으로 실행되었습니다.",
-                "Location process triggered for Room ID: " + roomId
+        return ResponseEntity.ok(new ApiResponse<>(true, 200, "위치 정보 업데이트 및 장소 감지 로직이 성공적으로 실행되었습니다.", "Location process triggered for Room ID: " + roomId
         ));
     }
 }

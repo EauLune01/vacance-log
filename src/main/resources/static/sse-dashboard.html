@@ -45,7 +45,7 @@
         box.appendChild(feed);
         container.appendChild(box);
 
-        const es = new EventSource(`/api/notifications/subscribe/${userId}`);
+        const es = new EventSource(`/api/notification/${userId}/subscribe`);
 
         es.addEventListener("recommendation", (e) => {
             const data = JSON.parse(e.data);

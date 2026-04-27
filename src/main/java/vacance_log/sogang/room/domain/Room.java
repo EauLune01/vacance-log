@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import vacance_log.sogang.diary.domain.Diary;
 import vacance_log.sogang.global.domain.BaseEntity;
-import vacance_log.sogang.global.exception.room.TravelAlreadyFinishedException;
 import vacance_log.sogang.notification.domain.PushHistory;
 import vacance_log.sogang.global.exception.room.RoomCapacityExceededException;
 import vacance_log.sogang.photo.domain.Photo;
@@ -20,6 +19,8 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Room extends BaseEntity {
+
+    private static final int MAX_CAPACITY = 4;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,8 +47,6 @@ public class Room extends BaseEntity {
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
     private List<PushHistory> pushHistories = new ArrayList<>();
-
-    private static final int MAX_CAPACITY = 4;
 
     public static Room createRoom(String title, City city) {
         Room room = new Room();
