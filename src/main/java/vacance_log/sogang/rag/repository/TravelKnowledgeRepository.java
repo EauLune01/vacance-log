@@ -14,6 +14,4 @@ public interface TravelKnowledgeRepository extends JpaRepository<TravelKnowledge
 
     @Query("select t from TravelKnowledge t where t.placeCode = :code")
     Optional<TravelKnowledge> findByCode(@Param("code") String code);
-
-    List<TravelKnowledge> findAllByCity(String city);
 }

@@ -17,7 +17,7 @@ spring:
         options:
           model: gpt-4o-mini
           temperature: 0.7
-          max-tokens: 500
+          max-tokens: 1500
     vectorstore:
       pgvector:
         index-type: HNSW

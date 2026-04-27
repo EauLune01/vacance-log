@@ -87,14 +87,14 @@ public class OpenAiService {
                 .content();
     }
 
-    public String generateFinalEssay(List<Photo> photos) {
+    public String generateFinalEssay(List<Photo> photos, String cityName) {
         String photoContext = photos.stream()
-                .map(p -> String.format("[%s] %s", p.getCreatedAt().toLocalDate(), p.getDescription()))
+                .map(p -> String.format("[%s 추억] %s", cityName, p.getDescription()))
                 .collect(Collectors.joining("\n"));
 
         return chatClient.prompt()
-                .system(TravelPromptTemplates.GROUP_DIARY_SYSTEM)
-                .user(String.format(TravelPromptTemplates.DIARY_USER_INSTRUCTION, photoContext))
+                .system(String.format(TravelPromptTemplates.GROUP_DIARY_SYSTEM, cityName))
+                .user(String.format(TravelPromptTemplates.DIARY_USER_INSTRUCTION, cityName, photoContext, cityName))
                 .call()
                 .content();
     }
@@ -128,14 +128,14 @@ public class OpenAiService {
     public String extractSearchKeywords(String rawQuery) {
         try {
             String keywords = chatClient.prompt()
-                    .system("Extract only 1~3 core search keywords (location, activity, or specific items) from the user's travel-related question. Return ONLY the keywords separated by spaces. If no specific keyword is found, return an empty string.")
+                    .system(TravelPromptTemplates.KEYWORD_EXTRACTION_SYSTEM)
                     .user(rawQuery)
                     .call()
                     .content();
 
             return (keywords != null) ? keywords.trim() : "";
         } catch (Exception e) {
-            log.warn("⚠️ [Keyword Extraction Failed] Fallback to original query. error={}", e.getMessage());
+            log.warn("⚠️ [Keyword Extraction Failed] error={}", e.getMessage());
             return "";
         }
     }

@@ -20,6 +20,7 @@ public class DiaryVectorService {
         metadata.put("roomId", diary.getRoom().getId());
         metadata.put("type", "GROUP");
         metadata.put("userId", -1L);
+        metadata.put("cityName", diary.getRoom().getCity().getName());
 
         Document document = new Document(diary.getContent(), metadata);
         vectorStore.add(List.of(document));

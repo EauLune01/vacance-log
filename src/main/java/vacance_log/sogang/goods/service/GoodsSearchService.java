@@ -8,7 +8,7 @@ import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.ai.vectorstore.filter.Filter;
 import org.springframework.ai.vectorstore.filter.FilterExpressionBuilder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
+import org.springframework.transaction.annotation.Transactional;
 import vacance_log.sogang.diary.domain.DiaryType;
 import vacance_log.sogang.diary.dto.command.DiaryQueryCommand;
 import vacance_log.sogang.diary.dto.result.DiaryDetailResult;
@@ -21,14 +21,15 @@ import vacance_log.sogang.room.repository.UserRoomRepository;
 import vacance_log.sogang.user.domain.User;
 import vacance_log.sogang.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class GoodsSearchService {
 
     private final VectorStore vectorStore;
@@ -48,51 +49,45 @@ public class GoodsSearchService {
         }
 
         String rawQuery = command.getQuery();
+
         String optimizedQuery = openAiService.extractSearchKeywords(rawQuery);
-        String finalSearchQuery = StringUtils.hasText(optimizedQuery) ? optimizedQuery : rawQuery;
 
         Filter.Expression diaryFilter = createFilter(command.getUserId(), myRoomIds);
         FilterExpressionBuilder b = new FilterExpressionBuilder();
 
-        // 1. 검색 범위 설정
         List<Document> allCandidates = vectorStore.similaritySearch(
                 SearchRequest.builder()
-                        .query(finalSearchQuery)
-                        .topK(5)
-                        .similarityThreshold(0.65)
+                        .query(optimizedQuery)
+                        .topK(10)
+                        .similarityThreshold(0.5)
                         .filterExpression(diaryFilter)
                         .build()
         );
 
-        // 2. 가장 유사도가 높은 문서의 도시를 기준으로 그룹핑
-        List<Document> diaryDocs = new ArrayList<>();
-        if (!allCandidates.isEmpty()) {
-            // 1. 안전하게 첫 번째 문서의 도시명을 가져옴 (없으면 빈 문자열)
-            Object cityObj = allCandidates.get(0).getMetadata().get("cityName");
-            String targetCity = (cityObj != null) ? cityObj.toString() : "";
+        List<Document> diaryDocs = allCandidates.stream()
+                .filter(doc -> {
+                    Object cityObj = doc.getMetadata().get("cityName");
+                    if (cityObj == null) return false;
+                    String cityName = cityObj.toString();
 
-            if (!targetCity.isEmpty()) {
-                // 2. 해당 도시와 일치하는 문서만 필터링
-                diaryDocs = allCandidates.stream()
-                        .filter(doc -> {
-                            Object docCity = doc.getMetadata().get("cityName");
-                            return docCity != null && docCity.toString().equals(targetCity);
-                        })
-                        .limit(2)
-                        .toList();
+                    return optimizedQuery.toLowerCase().contains(cityName.toLowerCase()) ||
+                            cityName.toLowerCase().contains(optimizedQuery.toLowerCase());
+                })
+                .collect(Collectors.toMap(
+                        doc -> String.valueOf(doc.getMetadata().get("cityName")) + "_" + String.valueOf(doc.getMetadata().get("type")),
+                        doc -> doc,
+                        (existing, replacement) -> existing
+                ))
+                .values().stream()
+                .sorted(Comparator.comparing(doc -> String.valueOf(doc.getMetadata().get("type")))) // 정렬 보장
+                .limit(2)
+                .toList();
 
-                log.info("🎯 Selected City for Context: {}", targetCity);
-            } else {
-                diaryDocs = allCandidates.stream().limit(2).toList();
-            }
-        }
-        // 3. 지식(KNOWLEDGE) 데이터 조회
         List<Document> knowledgeDocs = vectorStore.similaritySearch(
                 SearchRequest.builder()
-                        .query(finalSearchQuery)
+                        .query(optimizedQuery)
                         .topK(2)
-                        .similarityThreshold(0.6)
-                        .filterExpression(b.eq("type", "KNOWLEDGE").build())
+                        .filterExpression(b.eq("city", optimizedQuery).build())
                         .build()
         );
 
@@ -102,22 +97,17 @@ public class GoodsSearchService {
         String systemKnowledge = knowledgeDocs.isEmpty() ? "" :
                 knowledgeDocs.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
 
-        // AI 답변 생성
         String aiAnswer = openAiService.generateAnswerFromDiaries(rawQuery, userContext, systemKnowledge, user.getNickname());
 
-        // 4. 결과 매핑 (DiaryDetailResult 변환)
         List<DiaryDetailResult> diaryResults = diaryDocs.stream()
                 .map(doc -> {
                     Long roomId = Long.parseLong(doc.getMetadata().get("roomId").toString());
                     DiaryType type = DiaryType.valueOf(doc.getMetadata().get("type").toString());
 
-                    if (type == DiaryType.INDIVIDUAL) {
-                        return diaryQueryService.getPersonalDiary(DiaryQueryCommand.of(roomId, command.getUserId(), type));
-                    } else {
-                        return diaryQueryService.getGroupDiary(roomId);
-                    }
+                    return (type == DiaryType.INDIVIDUAL) ?
+                            diaryQueryService.getPersonalDiary(DiaryQueryCommand.of(roomId, command.getUserId(), type)) :
+                            diaryQueryService.getGroupDiary(roomId);
                 })
-                .distinct()
                 .toList();
 
         return GoodsSearchResult.of(aiAnswer, diaryResults, !diaryDocs.isEmpty());
@@ -128,13 +118,12 @@ public class GoodsSearchService {
 
         return b.group(
                 b.or(
-                        // 사진 메모 포함 내가 올린 모든 개인 데이터
+                        // 내 개인 다이어리 데이터
                         b.and(
                                 b.eq("userId", userId),
                                 b.eq("type", "INDIVIDUAL")
                         ),
-
-                        // 내가 속한 방의 그룹 다이어리
+                        // 내가 참여한 방의 그룹 다이어리 데이터
                         b.and(
                                 b.in("roomId", myRoomIds.toArray()),
                                 b.eq("type", "GROUP")
