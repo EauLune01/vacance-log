@@ -12,7 +12,6 @@ import vacance_log.sogang.photo.dto.event.PhotoAnalysisEvent;
 import vacance_log.sogang.photo.repository.PhotoRepository;
 import vacance_log.sogang.photo.service.PhotoVectorService;
 import vacance_log.sogang.room.domain.Room;
-import vacance_log.sogang.user.domain.User;
 
 @Slf4j
 @Component

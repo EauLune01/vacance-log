@@ -1,7 +1,6 @@
 package vacance_log.sogang.photo.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PhotoVectorService {
@@ -24,8 +22,7 @@ public class PhotoVectorService {
         metadata.put("roomId", photo.getRoom().getId());
         metadata.put("userId", photo.getUser().getId());
         metadata.put("type", "INDIVIDUAL");
-
-        log.info("📤 [Vector DB] Upserting Photo Embedding - ID: {}", photo.getId());
+        metadata.put("cityName", photo.getRoom().getCity().getName());
 
         Document document = new Document(content, metadata);
         vectorStore.add(List.of(document));

@@ -6,11 +6,9 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import vacance_log.sogang.diary.domain.Diary;
-import vacance_log.sogang.diary.domain.DiaryType;
 import vacance_log.sogang.diary.repository.DiaryRepository;
 import vacance_log.sogang.diary.service.DiaryVectorService;
 import vacance_log.sogang.global.config.rabbitMq.RabbitMqConfig;
-import vacance_log.sogang.global.exception.diary.DiaryNotFoundException;
 import vacance_log.sogang.global.exception.room.RoomNotFoundException;
 import vacance_log.sogang.global.service.OpenAiService;
 import vacance_log.sogang.notification.service.NotificationService;
@@ -18,12 +16,8 @@ import vacance_log.sogang.photo.domain.Photo;
 import vacance_log.sogang.photo.repository.PhotoRepository;
 import vacance_log.sogang.room.domain.Room;
 import vacance_log.sogang.room.repository.RoomRepository;
-import vacance_log.sogang.user.domain.User;
 
 import java.util.List;
-
-import static vacance_log.sogang.diary.domain.QDiary.diary;
-
 
 @Slf4j
 @Component
@@ -66,7 +60,7 @@ public class DiaryConsumer {
         List<Photo> allPhotos = photoRepository.findAllByRoom(room);
         if (allPhotos.isEmpty()) return;
 
-        String groupEssay = openAiService.generateFinalEssay(allPhotos);
+        String groupEssay = openAiService.generateFinalEssay(allPhotos, room.getCity().getName());
         float[] embedding = openAiService.createEmbedding(groupEssay);
 
         Diary groupDiary = Diary.createEssay(room);

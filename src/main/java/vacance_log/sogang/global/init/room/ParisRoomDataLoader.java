@@ -30,7 +30,6 @@ public class ParisRoomDataLoader implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        // 방 제목으로 중복 체크 (Paris 관련 방이 이미 있으면 스킵)
         if (roomRepository.findByTitle("Romantic Paris Trip").isPresent()) {
             return;
         }

@@ -24,7 +24,7 @@ public class TravelKnowledge extends BaseEntity {
     @Column(nullable = false)
     private String city;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String placeCode;
 
     private String theme;
