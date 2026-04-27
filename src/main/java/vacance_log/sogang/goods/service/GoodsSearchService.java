@@ -21,6 +21,7 @@ import vacance_log.sogang.room.repository.UserRoomRepository;
 import vacance_log.sogang.user.domain.User;
 import vacance_log.sogang.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -53,15 +54,39 @@ public class GoodsSearchService {
         Filter.Expression diaryFilter = createFilter(command.getUserId(), myRoomIds);
         FilterExpressionBuilder b = new FilterExpressionBuilder();
 
-        List<Document> diaryDocs = vectorStore.similaritySearch(
+        // 1. 검색 범위 설정
+        List<Document> allCandidates = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(finalSearchQuery)
-                        .topK(3)
-                        .similarityThreshold(0.5)
+                        .topK(5)
+                        .similarityThreshold(0.65)
                         .filterExpression(diaryFilter)
                         .build()
         );
 
+        // 2. 가장 유사도가 높은 문서의 도시를 기준으로 그룹핑
+        List<Document> diaryDocs = new ArrayList<>();
+        if (!allCandidates.isEmpty()) {
+            // 1. 안전하게 첫 번째 문서의 도시명을 가져옴 (없으면 빈 문자열)
+            Object cityObj = allCandidates.get(0).getMetadata().get("cityName");
+            String targetCity = (cityObj != null) ? cityObj.toString() : "";
+
+            if (!targetCity.isEmpty()) {
+                // 2. 해당 도시와 일치하는 문서만 필터링
+                diaryDocs = allCandidates.stream()
+                        .filter(doc -> {
+                            Object docCity = doc.getMetadata().get("cityName");
+                            return docCity != null && docCity.toString().equals(targetCity);
+                        })
+                        .limit(2)
+                        .toList();
+
+                log.info("🎯 Selected City for Context: {}", targetCity);
+            } else {
+                diaryDocs = allCandidates.stream().limit(2).toList();
+            }
+        }
+        // 3. 지식(KNOWLEDGE) 데이터 조회
         List<Document> knowledgeDocs = vectorStore.similaritySearch(
                 SearchRequest.builder()
                         .query(finalSearchQuery)
@@ -77,22 +102,18 @@ public class GoodsSearchService {
         String systemKnowledge = knowledgeDocs.isEmpty() ? "" :
                 knowledgeDocs.stream().map(Document::getText).collect(Collectors.joining("\n\n"));
 
+        // AI 답변 생성
         String aiAnswer = openAiService.generateAnswerFromDiaries(rawQuery, userContext, systemKnowledge, user.getNickname());
 
+        // 4. 결과 매핑 (DiaryDetailResult 변환)
         List<DiaryDetailResult> diaryResults = diaryDocs.stream()
                 .map(doc -> {
-                    // 1. 메타데이터에서 정보 추출
                     Long roomId = Long.parseLong(doc.getMetadata().get("roomId").toString());
                     DiaryType type = DiaryType.valueOf(doc.getMetadata().get("type").toString());
 
-                    // 2. 타입에 따라 'DiaryQueryService'의 새로운 메서드 호출
                     if (type == DiaryType.INDIVIDUAL) {
-                        // ✅ 개인 다이어리 로직 호출
-                        return diaryQueryService.getPersonalDiary(
-                                DiaryQueryCommand.of(roomId, command.getUserId(), type)
-                        );
+                        return diaryQueryService.getPersonalDiary(DiaryQueryCommand.of(roomId, command.getUserId(), type));
                     } else {
-                        // ✅ 그룹 다이어리 로직 호출
                         return diaryQueryService.getGroupDiary(roomId);
                     }
                 })

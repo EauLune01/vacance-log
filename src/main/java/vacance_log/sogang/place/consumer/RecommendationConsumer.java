@@ -1,8 +1,7 @@
-package vacance_log.sogang.place.worker;
+package vacance_log.sogang.place.consumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
 import org.springframework.ai.vectorstore.VectorStore;
@@ -32,7 +31,7 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class RecommendationWorker {
+public class RecommendationConsumer {
 
     private final RoomRepository roomRepository;
     private final VectorStore vectorStore;

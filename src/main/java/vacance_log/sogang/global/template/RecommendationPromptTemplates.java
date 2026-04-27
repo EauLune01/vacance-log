@@ -1,9 +1,9 @@
-package vacance_log.sogang.place.worker;
+package vacance_log.sogang.global.template;
 
 import org.springframework.stereotype.Component;
 
 @Component
-public class RecommendationPrompt {
+public class RecommendationPromptTemplates {
 
     public String getSystemPrompt() {
         return """

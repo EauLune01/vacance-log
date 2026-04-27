@@ -33,7 +33,7 @@ public class RoomService {
         // 2. 🚀 RabbitMQ로 "여행 종료 알림" 전송
         rabbitTemplate.convertAndSend(
                 RabbitMqConfig.TRAVEL_EXCHANGE,
-                RabbitMqConfig.DIARY_GENERATE_ROUTING,
+                RabbitMqConfig.DIARY_GENERATE,
                 roomId
         );
     }

@@ -2,14 +2,9 @@ package vacance_log.sogang.photo.consumer;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import vacance_log.sogang.diary.domain.Diary;
-import vacance_log.sogang.diary.domain.DiaryType;
-import vacance_log.sogang.diary.repository.DiaryRepository;
 import vacance_log.sogang.global.exception.photo.PhotoNotFoundException;
 import vacance_log.sogang.global.service.OpenAiService;
 import vacance_log.sogang.photo.domain.Photo;
@@ -19,17 +14,12 @@ import vacance_log.sogang.photo.service.PhotoVectorService;
 import vacance_log.sogang.room.domain.Room;
 import vacance_log.sogang.user.domain.User;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.List;
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class PhotoAnalysisConsumer {
 
     private final PhotoRepository photoRepository;
-    private final DiaryRepository diaryRepository;
     private final OpenAiService openAiService;
     private final PhotoVectorService photoVectorService;
 
@@ -38,7 +28,7 @@ public class PhotoAnalysisConsumer {
     public void handlePhotoAnalysis(PhotoAnalysisEvent event) {
         log.info("📩 [Async Analysis] Event received - PhotoId: {}", event.getPhotoId());
 
-        // 1. Photo 엔티티 조회 (Fetch Join 등을 통해 Room, User까지 가져온다고 가정)
+        // 1. Photo 엔티티 조회
         Photo photo = photoRepository.findByIdDetail(event.getPhotoId())
                 .orElseThrow(() -> {
                     log.error("❌ [Extraction Failed] Photo not found for ID: {}", event.getPhotoId());
@@ -46,7 +36,6 @@ public class PhotoAnalysisConsumer {
                 });
 
         Room room = photo.getRoom();
-        User user = photo.getUser();
         String placeCode = (photo.getPhotoPlace() != null) ? photo.getPhotoPlace().getPlaceCode() : null;
 
         try {
@@ -66,16 +55,5 @@ public class PhotoAnalysisConsumer {
         }
 
         log.info("🏁 [Task Completed] Consumer logic finished for PhotoId: {}", photo.getId());
-    }
-
-    private void ensureIndividualDiaryExists(Room room, User user) {
-        diaryRepository.findByRoomAndUserAndType(room, user, DiaryType.INDIVIDUAL)
-                .ifPresentOrElse(
-                        diary -> log.info("✨ [Diary Check] Already exists for User: {}", user.getNickname()),
-                        () -> {
-                            log.info("✨ [Diary Creation] First upload detected. Initializing Diary for User: {}", user.getNickname());
-                            diaryRepository.save(Diary.createPersonal(room, user));
-                        }
-                );
     }
 }

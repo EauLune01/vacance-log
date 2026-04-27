@@ -32,7 +32,7 @@ public class RabbitMqConfig {
      */
     public static final String PHOTO_UPLOADED = "photo.uploaded";      // 사진 업로드 이벤트
     public static final String LOCATION_DETECTED = "location.detected"; // 위치 감지 (추천) 이벤트
-    public static final String DIARY_GENERATE_ROUTING = "diary.generate.routing"; // 다이어리 생성 이벤트
+    public static final String DIARY_GENERATE = "diary.generate"; // 다이어리 생성 이벤트
 
     /* -------------------------------------------------------------------------- */
 
@@ -81,17 +81,19 @@ public class RabbitMqConfig {
     public Binding bindingDiary(Queue diaryGenerateQueue, TopicExchange travelExchange) {
         return BindingBuilder.bind(diaryGenerateQueue)
                 .to(travelExchange)
-                .with(DIARY_GENERATE_ROUTING);
+                .with(DIARY_GENERATE);
     }
 
     /**
      * 4. Infrastructure (Converter, Template)
      */
+    //객체 ↔ JSON 변환기
     @Bean
     public MessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
+    //RabbitMQ로 메시지 보내는 “클라이언트”
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);

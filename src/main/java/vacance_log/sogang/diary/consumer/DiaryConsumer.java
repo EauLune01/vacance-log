@@ -66,7 +66,7 @@ public class DiaryConsumer {
         List<Photo> allPhotos = photoRepository.findAllByRoom(room);
         if (allPhotos.isEmpty()) return;
 
-        String groupEssay = openAiService.generateFinalEssay(allPhotos, DiaryType.GROUP);
+        String groupEssay = openAiService.generateFinalEssay(allPhotos);
         float[] embedding = openAiService.createEmbedding(groupEssay);
 
         Diary groupDiary = Diary.createEssay(room);

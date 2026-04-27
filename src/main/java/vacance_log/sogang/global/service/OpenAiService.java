@@ -6,16 +6,15 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.embedding.EmbeddingModel;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MimeTypeUtils;
-import vacance_log.sogang.diary.domain.DiaryType;
 import vacance_log.sogang.rag.domain.TravelKnowledge;
-import vacance_log.sogang.diary.template.TravelPromptTemplates;
+import vacance_log.sogang.global.template.TravelPromptTemplates;
 import vacance_log.sogang.global.exception.embedding.EmbeddingFailedException;
 import vacance_log.sogang.global.exception.image.InvalidImageUrlException;
 import vacance_log.sogang.global.exception.photoPlace.PhotoPlaceNotFoundException;
 import vacance_log.sogang.photo.domain.Photo;
 import vacance_log.sogang.place.dto.event.PlaceCandidate;
 import vacance_log.sogang.place.repository.PhotoPlaceRepository;
-import vacance_log.sogang.place.worker.RecommendationPrompt;
+import vacance_log.sogang.global.template.RecommendationPromptTemplates;
 import vacance_log.sogang.rag.repository.TravelKnowledgeRepository;
 import vacance_log.sogang.room.domain.Room;
 
@@ -34,7 +33,7 @@ public class OpenAiService {
     private final EmbeddingModel embeddingModel;
     private final PhotoPlaceRepository photoPlaceRepository;
     private final TravelKnowledgeRepository travelKnowledgeRepository;
-    private final RecommendationPrompt promptStore;
+    private final RecommendationPromptTemplates promptStore;
 
     public String getRecommendation(Room room, String cityName, String personas,
                                     List<PlaceCandidate> candidates, String userContext) {
@@ -43,7 +42,7 @@ public class OpenAiService {
         Map<String, String> placeNameMap = photoPlaceRepository.findPlaceNamesByCodes(placeCodes);
         String formattedCandidates = formatCandidates(candidates, placeNameMap);
 
-        // 1. [Refactoring] 이름 줄인 findByCodes 사용
+        // 1. RAG 기반 검색
         String systemKnowledge = travelKnowledgeRepository.findByCodes(placeCodes).stream()
                 .map(k -> String.format("[%s Tip]: %s", k.getPlaceCode(), k.getContent()))
                 .collect(Collectors.joining("\n"));
@@ -88,7 +87,7 @@ public class OpenAiService {
                 .content();
     }
 
-    public String generateFinalEssay(List<Photo> photos, DiaryType type) {
+    public String generateFinalEssay(List<Photo> photos) {
         String photoContext = photos.stream()
                 .map(p -> String.format("[%s] %s", p.getCreatedAt().toLocalDate(), p.getDescription()))
                 .collect(Collectors.joining("\n"));
