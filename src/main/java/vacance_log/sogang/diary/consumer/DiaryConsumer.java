@@ -1,5 +1,6 @@
 package vacance_log.sogang.diary.consumer;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -50,7 +51,9 @@ public class DiaryConsumer {
     private void sendDiaryCompletionNotification(Room room) {
         log.info("🔔 [Notification] Triggering diary alerts for Room: {}", room.getTitle());
         room.getUserRooms().forEach(ur ->
-                notificationService.sendDiaryNotification(ur.getUser().getId(), room.getTitle())
+                {
+                    notificationService.sendDiaryNotification(ur.getUser().getId(), room.getTitle());
+                }
         );
     }
 

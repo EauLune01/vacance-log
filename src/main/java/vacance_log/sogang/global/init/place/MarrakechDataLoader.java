@@ -7,7 +7,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.data.geo.Point;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 import vacance_log.sogang.place.domain.City;
 import vacance_log.sogang.place.domain.PhotoPlace;
 import vacance_log.sogang.place.repository.CityRepository;

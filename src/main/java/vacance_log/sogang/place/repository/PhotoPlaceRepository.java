@@ -8,4 +8,5 @@ import java.util.Optional;
 
 public interface PhotoPlaceRepository extends JpaRepository<PhotoPlace,Long>, PhotoPlaceRepositoryCustom {
     Optional<PhotoPlace> findByPlaceCode(String placeCode);
+    Optional<PhotoPlace> findByCityIdAndPlaceCode(Long cityId, String placeCode);
 }

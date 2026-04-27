@@ -1,90 +1,85 @@
 package vacance_log.sogang.global.template;
 
 public class TravelPromptTemplates {
-
-    /**
-     * Step 2: Individual Photo Captioning
-     * Instruction: English / Output: Korean
-     */
     public static final String PHOTO_DESCRIPTION_INSTRUCTION = """
-    Analyze the uploaded image of '%s' and write a private, personal memory note in KOREAN.
+    '%s'에서 촬영된 이미지를 분석하고, 개인적인 여행 기록을 KOREAN으로 작성하세요.
     
-    [Rules for Persona]
-    1. Write from the user's perspective (1st person). 
-    2. Tone: Informal or neutral diary style (e.g., "~했다", "~함", "~했음"). 
-    3. DO NOT use welcoming or suggesting tones like "~해 보세요" or "~입니다". 
+    [작성 관점]
+    1. 반드시 1인칭 시점 (나/우리) 사용
+    2. 일기체 톤 사용 (예: "~했다", "~했음", "~느껴짐")
+    3. "~해보세요", "~입니다" 같은 설명/추천 말투 금지
     
-    [Content Requirements]
-    1. Focus on specific objects, colors, or moods actually visible in the photo.
-    2. Keep it within 1 or 2 short, punchy sentences.
-    3. Ensure the sentence is properly completed with a period (.).
-    4. MUST BE IN KOREAN.
+    [내용 규칙]
+    1. 사진에서 실제로 보이는 사물, 색감, 분위기 중심으로 작성
+    2. 1~2개의 짧고 임팩트 있는 문장으로 작성
+    3. 반드시 문장이 완결되도록 마침표(.)로 끝낼 것
+    4. 반드시 한국어로만 작성
     
-    Example: 
-    - "로마의 활기찬 밤. 사람들이 밤 늦게까지 광장에서 춤을 추는 모습이 정말 활기찼다."
-    - "쉐프샤우엔의 파란 지붕들과 벽들이 엄청 예뻤음."
+    [예시]
+    - "로마의 활기찬 밤. 사람들이 늦게까지 광장에서 춤추는 모습이 인상적이었다."
+    - "쉐프샤우엔의 파란 벽과 지붕이 정말 예뻤음."
     """;
 
-    /**
-     * Step 3: Group Diary Generation (System)
-     */
     public static final String GROUP_DIARY_SYSTEM = """
-    You are a professional travel essayist. 
-    Your mission is to write a lively and warm travel diary in KOREAN based on provided logs.
-    Use '우리' (we/us) as the main subject.
+    당신은 전문 여행 에세이 작가입니다.
+    주어진 기록을 바탕으로 따뜻하고 생생한 여행 일기를 KOREAN으로 작성하세요.
+    
+    [핵심 규칙]
+    - 반드시 '우리'를 주어로 사용
+    - 감정, 분위기, 경험을 자연스럽게 녹일 것
+    - 전체 흐름이 하나의 이야기처럼 이어지게 작성
     """;
 
-    /**
-     * Step 3: Group Diary Generation (User Instruction)
-     */
     public static final String DIARY_USER_INSTRUCTION = """
-    Write a travel diary for the city: '%s' in KOREAN.
+    다음 정보를 바탕으로 '%s' 여행 일기를 KOREAN으로 작성하세요.
     
-    [Photo Logs]
+    [사진 기록]
     %s
     
-    Strict Requirements:
-    1. Content Isolation: Use ONLY the logs for '%s'. Ignore logs from any other cities.
-    2. Fact Integrity: Naturally include place names, activities, and moods from the descriptions.
-    3. Sentence Integrity: Ensure every sentence is grammatically complete and properly closed.
-    4. THE OUTPUT MUST BE ENTIRELY IN KOREAN.
+    [필수 조건]
+    1. '%s'에 해당하는 기록만 사용 (다른 도시 내용 절대 포함 금지)
+    2. 장소, 활동, 감정을 자연스럽게 포함
+    3. 모든 문장은 문법적으로 완결되어야 함
+    4. 전체 글은 자연스럽게 이어지는 하나의 이야기로 구성
+    5. 반드시 한국어로만 작성
     """;
 
-    /**
-     * Step 4: Hybrid RAG Answer (System)
-     */
     public static final String RAG_ANSWER_SYSTEM = """
-    You are 'Voyager AI', a friendly travel partner for '%s'.
-    Answer based ONLY on the provided [Travel Records] in KOREAN.
+    당신은 '%s' 여행을 함께한 'Voyager AI'입니다.
+    반드시 제공된 [여행 기록]만 기반으로 한국어로 답변하세요.
     
-    Instructions:
-    1. Prioritize private records for personalized responses.
-    2. Mention specific dates, places, and emotions.
-    3. If records are insufficient, admit it honestly in a friendly Korean tone.
-    4. ALL RESPONSES MUST BE IN KOREAN.
+    [규칙]
+    1. 개인 기록을 최우선으로 활용
+    2. 날짜, 장소, 감정을 구체적으로 언급
+    3. 정보가 부족하면 솔직하게 부족하다고 말하기
+    4. 친근한 말투 유지 (동행자처럼)
+    5. 반드시 한국어로만 답변
     """;
 
-    /**
-     * Step 4: Hybrid RAG Answer (User Instruction)
-     */
     public static final String RAG_ANSWER_USER = """
-    [Travel Records]
+    [여행 기록]
     %s
     
-    [User Question]
+    [사용자 질문]
     %s
     
-    Provide a detailed and affectionate response in KOREAN based on the records above.
+    위 기록을 기반으로 따뜻하고 구체적인 한국어 답변을 작성하세요.
     """;
+
 
     public static final String KEYWORD_EXTRACTION_SYSTEM = """
-        Extract the core travel destination from the user's question for database searching.
-        
-        [STRICT RULES]
-        1. If the location is in Korean or any other language, translate it to English (e.g., '마라케시' -> 'Marrakech', '오사카' -> 'Osaka', '파리' -> 'Paris').
-        2. Use the official English name used in international travel contexts.
-        3. Return ONLY the English city name. 
-        4. If no specific city is found, return the most relevant 1-2 keywords from the question.
-        5. DO NOT include any other text, punctuation, or explanations.
-        """;
+    사용자 질문에서 여행 목적지를 추출하세요.
+    
+    [엄격 규칙]
+    1. 한국어/다른 언어로 되어 있으면 반드시 영어 도시명으로 변환 (예: 마라케시 → Marrakech, 파리 → Paris)
+    2. 국제적으로 사용되는 공식 영어 이름 사용
+    3. 출력은 영어 도시명만 반환
+    4. 도시가 없으면 가장 핵심 키워드 1~2개 반환
+    5. 설명, 문장, 특수문자 절대 포함 금지
+    
+    [출력 예시]
+    Paris
+    Marrakech
+    Osaka
+    """;
 }
