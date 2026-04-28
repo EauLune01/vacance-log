@@ -19,6 +19,11 @@
             margin-top: 8px;
         }
         .title { font-weight: bold; }
+        .type {
+            font-size: 11px;
+            color: gray;
+            margin-bottom: 4px;
+        }
     </style>
 </head>
 <body>
@@ -47,22 +52,50 @@
 
         const es = new EventSource(`/api/notification/${userId}/subscribe`);
 
-        es.addEventListener("PLACE_RECOMMENDATION", (e) => {
-            const data = JSON.parse(e.data);
-
+        // 🔥 공통 카드 생성 함수
+        const renderCard = (data) => {
             const card = document.createElement("div");
             card.className = "card";
 
             card.innerHTML = `
+                <div class="type">${data.type}</div>
                 <div class="title">${data.title}</div>
                 <div>${data.content}</div>
             `;
 
             feed.prepend(card);
+        };
+
+        // 🔥 추천 알림
+        es.addEventListener("PLACE_RECOMMENDATION", (e) => {
+            const data = JSON.parse(e.data);
+            renderCard(data);
         });
 
-        es.onerror = () => console.log(`❌ error user ${userId}`);
-        es.onopen = () => console.log(`✅ connected user ${userId}`);
+        // 🔥 다이어리 완료 알림 (이게 핵심 추가!)
+        es.addEventListener("DIARY_COMPLETE", (e) => {
+            const data = JSON.parse(e.data);
+            renderCard(data);
+        });
+
+        // 🔥 fallback (혹시 이벤트 이름 꼬일 때 대비)
+        es.onmessage = (e) => {
+            try {
+                const data = JSON.parse(e.data);
+                console.log("⚠️ fallback event:", data);
+                renderCard(data);
+            } catch (err) {
+                console.log("❌ fallback parse error", err);
+            }
+        };
+
+        es.onerror = (e) => {
+            console.log(`❌ error user ${userId}`, e);
+        };
+
+        es.onopen = () => {
+            console.log(`✅ connected user ${userId}`);
+        };
     });
 </script>
 

@@ -30,9 +30,9 @@ public class NotificationService {
     private static final String HISTORY_PREFIX = "notif:history:";
     private static final long TIMEOUT = 60L * 60 * 1000;
 
-    private static final String DIARY_TITLE = "Travel Diaries Ready! ✍️";
+    private static final String DIARY_TITLE = "여행 일기 완성! ✍️";
     private static final String DIARY_CONTENT_FORMAT =
-            "The diaries for [%s] are now complete. Go check them out!";
+            "[%s] 여행 일기가 완성됐어요. 지금 확인해보세요!";
 
     // =========================
     // Subscribe
