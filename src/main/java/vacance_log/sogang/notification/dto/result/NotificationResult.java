@@ -41,11 +41,13 @@ public class NotificationResult {
 
     public static NotificationResult ofDiaryComplete(
             Long userId,
+            Long roomId,
             String title,
             String content
     ) {
         return NotificationResult.builder()
                 .userId(userId)
+                .roomId(roomId)
                 .title(title)
                 .content(content)
                 .type("DIARY_COMPLETE")

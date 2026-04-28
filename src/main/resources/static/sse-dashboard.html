@@ -66,14 +66,17 @@
             feed.prepend(card);
         };
 
-        // 🔥 추천 알림
         es.addEventListener("PLACE_RECOMMENDATION", (e) => {
             const data = JSON.parse(e.data);
             renderCard(data);
         });
 
-        // 🔥 다이어리 완료 알림 (이게 핵심 추가!)
         es.addEventListener("DIARY_COMPLETE", (e) => {
+            const data = JSON.parse(e.data);
+            renderCard(data);
+        });
+
+        es.addEventListener("CONNECTED", (e) => {
             const data = JSON.parse(e.data);
             renderCard(data);
         });

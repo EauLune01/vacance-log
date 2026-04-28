@@ -78,12 +78,12 @@ public class NotificationService {
     // =========================
     // Send (Diary)
     // =========================
-    public void sendDiaryNotification(Long userId, String roomTitle) {
+    public void sendDiaryNotification(Long userId, Long roomId, String roomTitle) {
 
         String content = String.format(DIARY_CONTENT_FORMAT, roomTitle);
 
         NotificationResponse response = NotificationResponse.from(
-                NotificationResult.ofDiaryComplete(userId, DIARY_TITLE, content)
+                NotificationResult.ofDiaryComplete(userId, roomId, DIARY_TITLE, content)
         );
 
         redisTemplate.convertAndSend(CHANNEL_PREFIX + userId, response);
