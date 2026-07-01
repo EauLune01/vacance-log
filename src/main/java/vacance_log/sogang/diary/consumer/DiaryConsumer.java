@@ -1,6 +1,4 @@
 package vacance_log.sogang.diary.consumer;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -52,7 +50,8 @@ public class DiaryConsumer {
         log.info("🔔 [Notification] Triggering diary alerts for Room: {}", room.getTitle());
         room.getUserRooms().forEach(ur ->
                 {
-                    notificationService.sendDiaryNotification(ur.getUser().getId(), room.getTitle());
+                    // 두 번째 인자로 room.getId()를 추가해 총 3개의 인자를 전달합니다.
+                    notificationService.sendDiaryNotification(ur.getUser().getId(), room.getId(), room.getTitle());
                 }
         );
     }
