@@ -50,7 +50,6 @@ public class DiaryConsumer {
         log.info("🔔 [Notification] Triggering diary alerts for Room: {}", room.getTitle());
         room.getUserRooms().forEach(ur ->
                 {
-                    // 두 번째 인자로 room.getId()를 추가해 총 3개의 인자를 전달합니다.
                     notificationService.sendDiaryNotification(ur.getUser().getId(), room.getId(), room.getTitle());
                 }
         );
